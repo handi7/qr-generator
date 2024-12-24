@@ -9,6 +9,7 @@ import { Accordion, AccordionItem } from "@nextui-org/accordion";
 import { Slider } from "@nextui-org/slider";
 import { Radio, RadioGroup } from "@nextui-org/radio";
 import ThemeSwitch from "./theme";
+import { Divider } from "@nextui-org/react";
 
 const defaultOptions: Partial<Options> = {
   width: 240,
@@ -41,6 +42,8 @@ export default function Home() {
 
       <div className="w-full md:max-w-72 flex flex-col gap-5 py-10">
         <ThemeSwitch />
+
+        <Divider />
 
         <Input
           size="sm"
