@@ -1,299 +1,101 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import QR from "./qr";
-import { Input } from "@nextui-org/input";
-import { CornerDotType, DotType, Options, ShapeType } from "qr-code-styling";
-import { HexAlphaColorPicker } from "react-colorful";
-import { Accordion, AccordionItem } from "@nextui-org/accordion";
-import { Slider } from "@nextui-org/slider";
-import { Radio, RadioGroup } from "@nextui-org/radio";
-import ThemeSwitch from "./theme";
-import { Divider } from "@nextui-org/react";
-
-const defaultOptions: Partial<Options> = {
-  width: 240,
-  height: 240,
-  shape: "square",
-  margin: 10,
-  imageOptions: { margin: 0, imageSize: 1 },
-  backgroundOptions: { color: "#ffffff", round: 0.08 },
-  dotsOptions: { color: "#4267b2", type: "rounded" },
-  cornersDotOptions: { color: "#4267b2", type: "square" },
-  cornersSquareOptions: { color: "#4267b2", type: "square" },
-};
+import { CornerDotType, CornerSquareType, DotType, Options, ShapeType } from "qr-code-styling";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  main,
+  mainBg,
+  mainCornersDot,
+  mainCornersSquare,
+  mainDots,
+  mainImage,
+} from "@/constants/default.data";
+import { useImageStore } from "@/store";
+import { Button, Drawer, DrawerBody, DrawerContent } from "@nextui-org/react";
+import SettingsIcon from "@/components/settings-icon";
+import ConfigurationSection from "./configuration";
+import OptionsSection from "./options";
 
 export default function Home() {
-  const [data, setData] = useState("https://handiani.my.id");
-  const [options, setOptions] = useState<Partial<Options>>(defaultOptions);
+  const router = useRouter();
+  const sp = useSearchParams();
+  const searchParams = new URLSearchParams(sp);
 
-  const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      const image = URL.createObjectURL(e.target.files[0]);
-      setOptions((prev) => ({ ...prev, image }));
-    }
+  const text = searchParams.get("text") || "";
+  const size = Number(searchParams.get("size")) || 240;
+  const shape = (searchParams.get("shape") || main.shape) as ShapeType;
+  const margin = Number(searchParams.get("margin")) || main.margin || 0;
+
+  const bgRound = Number(searchParams.get("bg_round")) || mainBg.round;
+  const bgColor = searchParams.get("bg_color") || mainBg.color;
+
+  const dotType = searchParams.get("dot_type") || mainDots.type;
+  const dotColor = searchParams.get("dot_color") || mainDots.color;
+
+  const cDotType = searchParams.get("corner_dot_type") || mainCornersDot.type;
+  const cDotColor = searchParams.get("corner_dot_color") || mainCornersDot.color;
+
+  const cSquareType = searchParams.get("corner_square_type") || mainCornersSquare.type;
+  const cSquareColor = searchParams.get("corner_square_color") || mainCornersSquare.color;
+
+  const imgMargin = Number(searchParams.get("img_margin")) || mainImage.margin;
+  const imageSize = Number(searchParams.get("img_size")) || mainImage.imageSize;
+
+  const store = useImageStore();
+
+  const [data, setData] = useState("https://handiani.my.id");
+  const [options, setOptions] = useState<Partial<Options>>({});
+  const [isOpen, setOpen] = useState(false);
+
+  const getOptions = (prev: Partial<Options>): Partial<Options> => {
+    const qrSize = size < 50 ? 50 : size;
+    const qrMargin = isNaN(margin) ? 10 : margin > 20 ? 20 : margin;
+    const tempOptions: Partial<Options> = {
+      ...prev,
+      width: qrSize,
+      height: qrSize,
+      shape,
+      margin: qrMargin,
+      image: store.image,
+      backgroundOptions: { round: bgRound, color: bgColor },
+      dotsOptions: { type: dotType as DotType, color: dotColor },
+      cornersDotOptions: { type: cDotType as CornerDotType, color: cDotColor },
+      cornersSquareOptions: { type: cSquareType as CornerSquareType, color: cSquareColor },
+      imageOptions: { margin: imgMargin, imageSize },
+    };
+    return tempOptions;
   };
 
+  useEffect(() => {
+    if (text) setData(text);
+    setOptions(getOptions);
+  }, [sp, router, store]);
+
   return (
-    <div className="w-full min-h-[100dvh] flex flex-col md:flex-row justify-center items-center gap-5 px-6">
-      <div className="w-full md:w-fit min-w-72 flex flex-col items-center gap-5">
-        <QR data={data} options={options} />
-      </div>
-
-      <div className="w-full md:max-w-72 flex flex-col gap-5 py-10">
-        <ThemeSwitch />
-
-        <Divider />
-
-        <Input
+    <div className="w-full lg:w-fit min-h-[100dvh] flex flex-col md:flex-row justify-center gap-5 px-6">
+      <div className="w-full md:w-fit lg:min-w-[720px] flex flex-col items-center gap-5">
+        <Button
+          isIconOnly
           size="sm"
-          radius="sm"
-          label="Text or URL"
-          className="w-full md:max-w-72"
-          value={data}
-          onChange={(e) => setData(e.target.value)}
-          placeholder="Input your text"
-        />
-
-        <Input
-          type="number"
-          size="sm"
-          radius="sm"
-          label="Size"
-          className="w-full md:max-w-72"
-          defaultValue="240"
-          onChange={(e) => {
-            const value = e.target.value;
-            if (Number(value) > 50) {
-              setOptions((prev) => ({ ...prev, width: Number(value), height: Number(value) }));
-            }
-          }}
-          placeholder="Input your text"
-        />
-
-        <Input type="file" size="sm" radius="sm" label="Image" onChange={onSelectImage} />
-
-        <RadioGroup
-          size="sm"
-          label="Shape"
-          value={options.shape}
-          onValueChange={(shape) =>
-            setOptions((prev) => ({
-              ...prev,
-              shape: shape as ShapeType,
-            }))
-          }
+          variant="flat"
+          className="fixed top-5 right-5 z-10 lg:hidden"
+          onPress={() => setOpen(true)}
         >
-          <Radio value="circle">Circle</Radio>
-          <Radio value="square">Square</Radio>
-        </RadioGroup>
+          <SettingsIcon size={18} className="fill-primary" />
+        </Button>
 
-        <Slider
-          size="sm"
-          className="w-full"
-          label="Margin"
-          maxValue={20}
-          minValue={1}
-          step={1}
-          value={options.margin}
-          onChange={(margin) =>
-            setOptions((prev) => ({
-              ...prev,
-              margin: typeof margin === "object" ? margin[0] : margin,
-            }))
-          }
-        />
+        <Drawer size="xs" isOpen={isOpen} onClose={() => setOpen(false)} className="bg-background">
+          <DrawerContent>
+            <DrawerBody className="py-10">
+              <ConfigurationSection />
+              <OptionsSection />
+            </DrawerBody>
+          </DrawerContent>
+        </Drawer>
 
-        <Accordion variant="light">
-          <AccordionItem
-            key="background_options"
-            aria-label="Background Options"
-            title="Background Options"
-          >
-            <div className="flex flex-col gap-5">
-              <Slider
-                size="sm"
-                className="w-full"
-                label="Round"
-                maxValue={1}
-                minValue={0}
-                step={0.01}
-                value={options.backgroundOptions?.round}
-                onChange={(round) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    backgroundOptions: {
-                      ...prev.backgroundOptions,
-                      round: typeof round === "object" ? round[0] : round,
-                    },
-                  }))
-                }
-              />
-
-              <label>Color</label>
-              <HexAlphaColorPicker
-                color={options.backgroundOptions?.color}
-                onChange={(color) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    backgroundOptions: { ...prev.backgroundOptions, color },
-                  }))
-                }
-              />
-            </div>
-          </AccordionItem>
-
-          <AccordionItem key="dots_options" aria-label="Dots Options" title="Dots Options">
-            <div className="flex flex-col gap-5">
-              <RadioGroup
-                size="sm"
-                label="Type"
-                value={options.dotsOptions?.type}
-                onValueChange={(type) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    dotsOptions: { ...prev.dotsOptions, type: type as DotType },
-                  }))
-                }
-              >
-                <Radio value="classy">Classy</Radio>
-                <Radio value="classy-rounded">Classy Rounded</Radio>
-                <Radio value="dots">Dots</Radio>
-                <Radio value="extra-rounded">Extra Rounded</Radio>
-                <Radio value="rounded">Rounded</Radio>
-                <Radio value="square">Square</Radio>
-              </RadioGroup>
-
-              <div className="">
-                <label>Color</label>
-                <HexAlphaColorPicker
-                  color={options.dotsOptions?.color}
-                  onChange={(color) =>
-                    setOptions((prev) => ({ ...prev, dotsOptions: { ...prev.dotsOptions, color } }))
-                  }
-                />
-              </div>
-            </div>
-          </AccordionItem>
-
-          <AccordionItem
-            key="corners_dots_options"
-            aria-label="Corners Dots Options"
-            title="Corners Dots Options"
-          >
-            <div className="flex flex-col gap-5">
-              <RadioGroup
-                size="sm"
-                label="Type"
-                value={options.cornersDotOptions?.type}
-                onValueChange={(type) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    cornersDotOptions: { ...prev.cornersDotOptions, type: type as CornerDotType },
-                  }))
-                }
-              >
-                <Radio value="dot">Dot</Radio>
-                <Radio value="square">Square</Radio>
-              </RadioGroup>
-
-              <div className="">
-                <label>Color</label>
-                <HexAlphaColorPicker
-                  color={options.cornersDotOptions?.color}
-                  onChange={(color) =>
-                    setOptions((prev) => ({
-                      ...prev,
-                      cornersDotOptions: { ...prev.cornersDotOptions, color },
-                    }))
-                  }
-                />
-              </div>
-            </div>
-          </AccordionItem>
-
-          <AccordionItem
-            key="corners_square_options"
-            aria-label="Corner Square Options"
-            title="Corner Square Options"
-          >
-            <div className="flex flex-col gap-5">
-              <RadioGroup
-                size="sm"
-                label="Type"
-                value={options.cornersSquareOptions?.type}
-                onValueChange={(type) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    cornersSquareOptions: {
-                      ...prev.cornersSquareOptions,
-                      type: type as CornerDotType,
-                    },
-                  }))
-                }
-              >
-                <Radio value="dot">Dot</Radio>
-                <Radio value="extra-rounded">Extra Rounded</Radio>
-                <Radio value="square">Square</Radio>
-              </RadioGroup>
-
-              <div className="">
-                <label>Color</label>
-                <HexAlphaColorPicker
-                  color={options.cornersSquareOptions?.color}
-                  onChange={(color) =>
-                    setOptions((prev) => ({
-                      ...prev,
-                      cornersSquareOptions: { ...prev.cornersSquareOptions, color },
-                    }))
-                  }
-                />
-              </div>
-            </div>
-          </AccordionItem>
-
-          <AccordionItem key="image_options" aria-label="ImageOptions" title="ImageOptions">
-            <div className="flex flex-col gap-5">
-              <Slider
-                size="sm"
-                className="w-full"
-                label="Margin"
-                maxValue={20}
-                minValue={1}
-                step={1}
-                value={options.imageOptions?.margin}
-                onChange={(margin) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    imageOptions: {
-                      ...prev.imageOptions,
-                      margin: typeof margin === "object" ? margin[0] : margin,
-                    },
-                  }))
-                }
-              />
-
-              <Slider
-                size="sm"
-                className="w-full"
-                label="Image SIze"
-                maxValue={1}
-                minValue={0.1}
-                step={0.1}
-                value={options.imageOptions?.imageSize}
-                onChange={(size) =>
-                  setOptions((prev) => ({
-                    ...prev,
-                    imageOptions: {
-                      ...prev.imageOptions,
-                      imageSize: typeof size === "object" ? size[0] : size,
-                    },
-                  }))
-                }
-              />
-            </div>
-          </AccordionItem>
-        </Accordion>
+        <QR data={data} options={options} />
       </div>
     </div>
   );
