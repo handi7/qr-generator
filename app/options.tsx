@@ -17,7 +17,7 @@ import {
   Radio,
   RadioGroup,
   Slider,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CornerDotType, CornerSquareType, DotType } from "qr-code-styling";
 import React, { ChangeEvent, useEffect, useState } from "react";

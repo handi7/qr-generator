@@ -2,16 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0, 0%, 100%;
-    --foreground: 0, 0%, 25%;
-  }
+:root {
+  --color-primary: 25 194 160;
+  --color-secondary: 163 177 138;
+  --color-background: 255 255 255;
+  --color-foreground: 64 64 64;
+  --color-divider: 229 231 235;
+  --color-overlay: 0 0 0;
+  --color-focus: 75 155 55;
+  --color-content1: 250 250 247;
+  --color-content2: 238 237 232;
+  --color-content3: 223 220 212;
+  --color-content4: 135 140 125;
+  --color-success: 22 163 74;
+  --color-warning: 245 158 11;
+  --color-danger: 220 38 38;
+}
 
-  .dark {
-    --background: 185, 45%, 17%;
-    --foreground: 216, 11%, 82%;
-  }
+.dark {
+  --color-primary: 25 194 160;
+  --color-secondary: 110 135 90;
+  --color-background: 15 22 47;
+  --color-foreground: 204 208 214;
+  --color-divider: 110 125 145;
+  --color-overlay: 0 0 0;
+  --color-focus: 144 238 144;
+  --color-content1: 48 52 45;
+  --color-content2: 60 65 55;
+  --color-content3: 98 105 90;
+  --color-content4: 128 135 115;
+  --color-success: 22 163 74;
+  --color-warning: 245 158 11;
+  --color-danger: 220 38 38;
 }
 
 @layer base {
