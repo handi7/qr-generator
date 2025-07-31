@@ -2,9 +2,21 @@
 
 import React, { useEffect, useState } from "react";
 import ThemeSwitch from "./theme";
-import { Button, Divider, Input, Radio, RadioGroup, Slider } from "@nextui-org/react";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Button,
+  Divider,
+  Input,
+  Radio,
+  RadioGroup,
+  Slider,
+} from "@heroui/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
+import { templates } from "@/constants/template.data";
+import WifiTemplate from "@/components/wifi-template";
+import WhatsappTemplate from "@/components/whatsapp-template";
 
 interface DataState {
   text: string;
@@ -24,6 +36,7 @@ function ConfigurationSection() {
   const router = useRouter();
   const searchParams = new URLSearchParams(useSearchParams());
 
+  const template = searchParams.get("template") || "";
   const text = searchParams.get("text") || "";
   const size = searchParams.get("size") || "";
   const shape = searchParams.get("shape") || "";
@@ -45,6 +58,32 @@ function ConfigurationSection() {
     else setQuery(key, value);
   };
 
+  function renderTemplate(type: string) {
+    switch (type) {
+      case "wifi":
+        return <WifiTemplate />;
+
+      case "wa":
+        return <WhatsappTemplate />;
+
+      default:
+        return (
+          <Input
+            size="sm"
+            radius="sm"
+            label="Text or URL"
+            color="primary"
+            variant="bordered"
+            className="w-full md:max-w-72"
+            value={data?.text}
+            onChange={(e) => onChange("text", e.target.value, { debounce: true })}
+            isInvalid={!data.text}
+            errorMessage="Please input data"
+          />
+        );
+    }
+  }
+
   useEffect(() => {
     if (text) setData((prev) => ({ ...prev, text }));
     if (size) setData((prev) => ({ ...prev, size }));
@@ -56,18 +95,24 @@ function ConfigurationSection() {
     <>
       <ThemeSwitch />
       <Divider />
-      <Input
-        size="sm"
-        radius="sm"
-        label="Text or URL"
-        color="primary"
-        variant="bordered"
-        className="w-full md:max-w-72"
-        value={data?.text}
-        onChange={(e) => onChange("text", e.target.value, { debounce: true })}
-        isInvalid={!data.text}
-        errorMessage="Please input data"
-      />
+
+      <Autocomplete
+        className="max-w-xs"
+        items={templates}
+        defaultSelectedKey={template}
+        label="Select Template"
+        placeholder="Search template"
+        onSelectionChange={(key) => {
+          const selected = templates.find((item) => item.key === key);
+          setQuery("text", selected?.default || "https://handiani.my.id/");
+          setQuery("template", key?.toString() || "");
+        }}
+      >
+        {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
+      </Autocomplete>
+
+      {renderTemplate(template)}
+
       <Input
         type="number"
         size="sm"

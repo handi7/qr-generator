@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import QRCodeStyling, { FileExtension, Options } from "qr-code-styling";
-import { Button } from "@nextui-org/button";
-import { Select, SelectItem } from "@nextui-org/select";
-import { Input } from "@nextui-org/react";
+import { Button } from "@heroui/button";
+import { Select, SelectItem } from "@heroui/select";
+import { Input } from "@heroui/react";
+import LinkOrText from "@/components/link-or-text";
 
 type QrCodeProps = {
   data: string;
@@ -51,8 +52,10 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
       <div className="sticky top-0 w-full flex justify-center bg-background/20 backdrop-blur-xl p-3">
         <h1 className="font-semibold py-5">QR Code Generator</h1>
       </div>
-      <div className="w-full max-w-full flex flex-col items-center overflow-auto">
+      <div className="w-full max-w-full flex flex-col items-center gap-3 overflow-auto">
         <div ref={qrCodeRef} />
+
+        <LinkOrText data={data} />
       </div>
 
       <div className="w-full md:max-w-72 flex flex-col gap-3 py-5">

@@ -1,4 +1,4 @@
-import { nextui } from "@nextui-org/theme";
+import { heroui } from "@heroui/theme";
 import type { Config } from "tailwindcss";
 
 export default {
@@ -6,19 +6,28 @@ export default {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
+    "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        primary: {
-          DEFAULT: "#19c2a0",
-        },
-        background: { DEFAULT: "hsla(var(--background))" },
-        foreground: { DEFAULT: "hsla(var(--foreground))" },
+        primary: "rgb(var(--color-primary) / <alpha-value>)",
+        secondary: "rgb(var(--color-secondary) / <alpha-value>)",
+        background: "rgb(var(--color-background) / <alpha-value>)",
+        foreground: "rgb(var(--color-foreground) / <alpha-value>)",
+        divider: "rgb(var(--color-divider) / <alpha-value>)",
+        overlay: "rgb(var(--color-overlay) / <alpha-value>)",
+        focus: "rgb(var(--color-focus) / <alpha-value>)",
+        content1: "rgb(var(--color-content1) / <alpha-value>)",
+        content2: "rgb(var(--color-content2) / <alpha-value>)",
+        content3: "rgb(var(--color-content3) / <alpha-value>)",
+        content4: "rgb(var(--color-content4) / <alpha-value>)",
+        success: "rgb(var(--color-success) / <alpha-value>)",
+        warning: "rgb(var(--color-warning) / <alpha-value>)",
+        danger: "rgb(var(--color-danger) / <alpha-value>)",
       },
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [heroui()],
 } satisfies Config;

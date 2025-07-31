@@ -13,7 +13,7 @@ import {
   mainImage,
 } from "@/constants/default.data";
 import { useImageStore } from "@/store";
-import { Button, Drawer, DrawerBody, DrawerContent } from "@nextui-org/react";
+import { Button, Drawer, DrawerBody, DrawerContent } from "@heroui/react";
 import SettingsIcon from "@/components/settings-icon";
 import ConfigurationSection from "./configuration";
 import OptionsSection from "./options";

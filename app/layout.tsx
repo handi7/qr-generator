@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { NextUIProvider } from "@nextui-org/system";
+import { HeroUIProvider } from "@heroui/system";
 import { ThemeProvider } from "next-themes";
 import ConfigurationSection from "./configuration";
 import OptionsSection from "./options";
 import { Suspense } from "react";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,7 +56,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ThemeProvider attribute="class" enableSystem>
-          <NextUIProvider>
+          <HeroUIProvider>
             <div className="w-full h-full min-h-[100dvh] flex flex-col items-center">
               <div className="w-full h-full flex justify-center gap-5 px-5">
                 <Suspense>
@@ -70,7 +70,7 @@ export default function RootLayout({
                 </Suspense>
               </div>
             </div>
-          </NextUIProvider>
+          </HeroUIProvider>
         </ThemeProvider>
       </body>
     </html>
