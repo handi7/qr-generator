@@ -97,6 +97,7 @@ function ConfigurationSection() {
       <Divider />
 
       <Autocomplete
+        variant="bordered"
         className="max-w-xs"
         items={templates}
         defaultSelectedKey={template}
@@ -124,6 +125,7 @@ function ConfigurationSection() {
         value={data.size}
         onChange={(e) => onChange("size", e.target.value, { debounce: true })}
       />
+
       <RadioGroup
         name="shape"
         size="sm"
@@ -134,6 +136,7 @@ function ConfigurationSection() {
         <Radio value="circle">Circle</Radio>
         <Radio value="square">Square</Radio>
       </RadioGroup>
+
       <Slider
         size="sm"
         className="w-full"

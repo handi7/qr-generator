@@ -52,10 +52,13 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
       <div className="sticky top-0 w-full flex justify-center bg-background/20 backdrop-blur-xl p-3">
         <h1 className="font-semibold py-5">QR Code Generator</h1>
       </div>
+
       <div className="w-full max-w-full flex flex-col items-center gap-3 overflow-auto">
         <div ref={qrCodeRef} />
+      </div>
 
-        <LinkOrText data={data} />
+      <div className="w-full max-w-96">
+        <LinkOrText data={data} className="break-all text-center" />
       </div>
 
       <div className="w-full md:max-w-72 flex flex-col gap-3 py-5">

@@ -1,6 +1,7 @@
 "use client";
 
 import { Input, Select, SelectItem } from "@heroui/react";
+import { Eye, EyeClosed } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
@@ -19,6 +20,7 @@ function WifiTemplate() {
   const text = searchParams.get("text") || "";
 
   const [data, setData] = useState<DataState>({});
+  const [showPassword, setShowPassword] = useState(false);
 
   const setQuery = (key: string, value: string) => {
     if (value) searchParams.set(key, value);
@@ -54,6 +56,7 @@ function WifiTemplate() {
   return (
     <div className="flex flex-col gap-3">
       <Select
+        variant="bordered"
         className="max-w-xs"
         label="Security"
         placeholder="Security"
@@ -67,6 +70,7 @@ function WifiTemplate() {
       </Select>
 
       <Input
+        variant="bordered"
         label="SSID"
         name="ssid"
         placeholder="SSID"
@@ -75,9 +79,18 @@ function WifiTemplate() {
       />
 
       <Input
+        variant="bordered"
+        type={showPassword ? "text" : "password"}
         label="Password"
         name="password"
         placeholder="Password"
+        endContent={
+          showPassword ? (
+            <Eye className="cursor-pointer" onClick={() => setShowPassword(false)} />
+          ) : (
+            <EyeClosed className="cursor-pointer" onClick={() => setShowPassword(true)} />
+          )
+        }
         value={data.password}
         onChange={onInputChange}
       />
