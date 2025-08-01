@@ -57,7 +57,7 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
         <div ref={qrCodeRef} />
       </div>
 
-      <div className="w-full max-w-96">
+      <div className="w-full max-w-96 flex flex-col items-center">
         <LinkOrText data={data} className="break-all text-center" />
       </div>
 
