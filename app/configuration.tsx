@@ -17,6 +17,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { templates } from "@/constants/template.data";
 import WifiTemplate from "@/components/wifi-template";
 import WhatsappTemplate from "@/components/whatsapp-template";
+import ContactTemplate from "@/components/contact-template";
 
 interface DataState {
   text: string;
@@ -65,6 +66,9 @@ function ConfigurationSection() {
 
       case "wa":
         return <WhatsappTemplate />;
+
+      case "contact":
+        return <ContactTemplate />;
 
       default:
         return (
