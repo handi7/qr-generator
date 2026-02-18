@@ -12,12 +12,15 @@ import {
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useDebouncedCallback } from "use-debounce";
-import { templates } from "@/constants/template.data";
+import { templateOptions } from "@/constants/template.data";
 import WifiTemplate from "@/components/wifi-template";
 import WhatsappTemplate from "@/components/whatsapp-template";
 import ContactTemplate from "@/components/contact-template";
+import EmailTemplate from "@/components/email-template";
 import useQueryParams from "@/hokks/useQueryParams";
 import InputNumber from "@/components/Shared/InputNumber";
+import { TemplateType } from "@/types/template.type";
+import { normalizeTemplateType } from "@/utils/template.utils";
 
 interface DataState {
   text: string;
@@ -38,6 +41,7 @@ function ConfigurationSection() {
   const query = useQueryParams();
 
   const template = query.get("template");
+  const currentType = normalizeTemplateType(template);
   const text = query.get("text");
   const size = query.get("size");
   const shape = query.get("shape");
@@ -55,16 +59,19 @@ function ConfigurationSection() {
     else query.update({ [key]: value });
   };
 
-  function renderTemplate(type: string) {
+  function renderTemplate(type: TemplateType) {
     switch (type) {
       case "wifi":
         return <WifiTemplate />;
 
-      case "wa":
+      case "whatsapp":
         return <WhatsappTemplate />;
 
       case "contact":
         return <ContactTemplate />;
+
+      case "email":
+        return <EmailTemplate />;
 
       default:
         return (
@@ -85,7 +92,7 @@ function ConfigurationSection() {
   }
 
   useEffect(() => {
-    if (text) setData((prev) => ({ ...prev, text }));
+    setData((prev) => ({ ...prev, text: text || defaultData.text }));
     if (size) setData((prev) => ({ ...prev, size }));
     if (shape) setData((prev) => ({ ...prev, shape }));
     if (margin) setData((prev) => ({ ...prev, margin }));
@@ -105,22 +112,28 @@ function ConfigurationSection() {
           <Autocomplete
             variant="bordered"
             className="w-full"
-            items={templates}
-            defaultSelectedKey={template}
+            items={templateOptions}
+            selectedKey={currentType}
             label="Select Template"
             placeholder="Search template"
             onSelectionChange={(key) => {
-              const selected = templates.find((item) => item.key === key);
+              const selected = templateOptions.find((item) => item.key === key?.toString());
+              const nextType = normalizeTemplateType(key?.toString());
+              const nextText =
+                nextType === "email" ? "" : selected?.default || "https://handiani.my.id/";
+
               query.reset({
-                text: selected?.default || "https://handiani.my.id/",
-                template: key?.toString() || "",
+                text: nextText,
+                template: nextType,
               });
             }}
           >
             {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
           </Autocomplete>
 
-          <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">{renderTemplate(template)}</div>
+          <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
+            {renderTemplate(currentType)}
+          </div>
         </div>
       </section>
 
@@ -166,7 +179,13 @@ function ConfigurationSection() {
         </div>
       </section>
 
-      <Button size="sm" color="danger" variant="flat" className="w-full" onPress={() => router.replace("/")}>
+      <Button
+        size="sm"
+        color="danger"
+        variant="flat"
+        className="w-full"
+        onPress={() => router.replace("/studio")}
+      >
         Reset All
       </Button>
     </div>

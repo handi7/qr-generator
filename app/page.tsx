@@ -1,7 +1,9 @@
 "use client";
 
+import Icon from "@/components/Shared/Icon";
+import { templates } from "@/constants/template.data";
 import { motion } from "framer-motion";
-import { ArrowRight, ContactRound, QrCode, Sparkles, Wifi } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 const container = {
@@ -20,32 +22,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-const templates = [
-  {
-    title: "Free Text",
-    description: "Turn any URL or message into a scan-ready code.",
-    href: "/studio?template=text",
-    icon: QrCode,
-  },
-  {
-    title: "WiFi",
-    description: "Share your network instantly without typing password.",
-    href: "/studio?template=wifi",
-    icon: Wifi,
-  },
-  {
-    title: "WhatsApp",
-    description: "Start chats with prefilled messages in one scan.",
-    href: "/studio?template=wa",
-    icon: Sparkles,
-  },
-  {
-    title: "Contact",
-    description: "Generate polished vCard QR with rich contact details.",
-    href: "/studio?template=contact",
-    icon: ContactRound,
-  },
-];
+const featuredTemplates = templates.slice(0, 4);
 
 export default function Home() {
   return (
@@ -157,8 +134,7 @@ export default function Home() {
         </motion.h3>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          {templates.map((template) => {
-            const Icon = template.icon;
+          {featuredTemplates.map((template) => {
             return (
               <motion.div key={template.title} variants={item}>
                 <Link
@@ -166,7 +142,7 @@ export default function Home() {
                   className="group block rounded-2xl border border-foreground/10 bg-background/70 p-5 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
                 >
                   <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <Icon size={18} />
+                    <Icon name={template.icon} size={18} />
                   </span>
                   <h4 className="mb-2 text-base font-semibold">{template.title}</h4>
                   <p className="text-sm text-foreground/70">{template.description}</p>
@@ -175,6 +151,16 @@ export default function Home() {
             );
           })}
         </div>
+
+        <motion.div variants={item} className="mt-6 flex justify-center">
+          <Link
+            href="/templates"
+            className="inline-flex items-center gap-2 rounded-xl border border-foreground/15 bg-background/70 px-5 py-3 text-sm font-medium backdrop-blur transition-colors hover:bg-foreground/5"
+          >
+            View All Templates
+            <ArrowRight size={16} />
+          </Link>
+        </motion.div>
       </motion.section>
 
       <motion.section

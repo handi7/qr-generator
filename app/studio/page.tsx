@@ -13,10 +13,12 @@ import {
 import { useImageStore } from "@/store";
 import useQueryParams from "@/hokks/useQueryParams";
 import QrCode from "./qr";
+import { normalizeTemplateType } from "@/utils/template.utils";
 
 export default function QRStudioPage() {
   const query = useQueryParams();
 
+  const currentType = normalizeTemplateType(query.get("template"));
   const text = query.get("text");
   const size = Number(query.get("size")) || 320;
   const shape = (query.get("shape") || main.shape) as ShapeType;
@@ -76,13 +78,16 @@ export default function QRStudioPage() {
       cSquareColor,
       imgMargin,
       imageSize,
-    ]
+    ],
   );
 
   useEffect(() => {
     if (text) setData(text);
+    else if (currentType === "email") setData("");
+    else setData("https://handiani.my.id");
+
     setOptions((prev) => getOptions(prev));
-  }, [text, getOptions]);
+  }, [text, currentType, getOptions]);
 
   return (
     <div className="w-full flex flex-col items-center">

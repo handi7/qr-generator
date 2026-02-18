@@ -1,47 +1,10 @@
 "use client";
 
+import Icon from "@/components/Shared/Icon";
+import { templates } from "@/constants/template.data";
 import { motion } from "framer-motion";
-import { ArrowRight, ContactRound, Link2, MessageCircle, Sparkles, Wifi } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
-
-const templates = [
-  {
-    title: "Free Text",
-    subtitle: "Universal",
-    description: "Create a QR code from any URL or custom text for campaigns, docs, and labels.",
-    href: "/studio?template=text",
-    accent: "from-primary/20 via-sky-400/15 to-emerald-300/10",
-    icon: Link2,
-    highlights: ["Instant setup", "Works everywhere", "Great for links"],
-  },
-  {
-    title: "WiFi",
-    subtitle: "Hospitality",
-    description: "Let people connect to your network by scanning once instead of typing credentials.",
-    href: "/studio?template=wifi",
-    accent: "from-sky-500/20 via-cyan-400/15 to-primary/10",
-    icon: Wifi,
-    highlights: ["Faster check-in", "Fewer support asks", "Event-friendly"],
-  },
-  {
-    title: "WhatsApp",
-    subtitle: "Conversion",
-    description: "Open a WhatsApp chat with prefilled text to speed up inquiries and sales.",
-    href: "/studio?template=wa",
-    accent: "from-emerald-500/20 via-green-400/15 to-teal-300/10",
-    icon: MessageCircle,
-    highlights: ["Prefilled message", "Higher engagement", "Simple CTA"],
-  },
-  {
-    title: "Contact vCard",
-    subtitle: "Networking",
-    description: "Share complete contact details in one scan, including multiple phones and emails.",
-    href: "/studio?template=contact",
-    accent: "from-violet-500/20 via-indigo-400/15 to-sky-300/10",
-    icon: ContactRound,
-    highlights: ["Rich profile", "Mobile-friendly", "Save to contacts"],
-  },
-];
 
 const container = {
   hidden: { opacity: 0 },
@@ -86,14 +49,15 @@ export default function TemplatesPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 xl:gap-5">
           {templates.map((template) => {
-            const Icon = template.icon;
             return (
               <motion.article key={template.title} variants={item}>
                 <Link
                   href={template.href}
                   className="group relative block overflow-hidden rounded-3xl border border-foreground/10 bg-background/70 p-5 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 sm:p-6"
                 >
-                  <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${template.accent}`} />
+                  <div
+                    className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${template.accent}`}
+                  />
 
                   <div className="relative space-y-4">
                     <div className="flex items-start justify-between gap-3">
@@ -105,7 +69,7 @@ export default function TemplatesPage() {
                       </div>
 
                       <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-foreground/10 bg-background/80 text-primary">
-                        <Icon size={18} />
+                        <Icon name={template.icon} size={18} />
                       </span>
                     </div>
 
