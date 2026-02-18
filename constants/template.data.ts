@@ -9,9 +9,6 @@ export const templates = [
   {
     label: "Contact (vCard)",
     key: "contact",
-    default: `BEGIN:VCARD
-      VERSION:3.0
-      FN:John Doe
-      END:VCARD`,
+    default: `BEGIN:VCARD\nVERSION:3.0\nFN:John Doe\nEND:VCARD`,
   },
 ];
