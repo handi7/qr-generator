@@ -104,11 +104,6 @@ function normalizeRecipients(value: string) {
     .join(",");
 }
 
-function setOrDelete(params: URLSearchParams, key: string, value: string) {
-  if (value) params.set(key, value);
-  else params.delete(key);
-}
-
 function generateEmailQR(data: EmailData): string {
   const to = normalizeRecipients(data.to);
   if (!to) return "";
