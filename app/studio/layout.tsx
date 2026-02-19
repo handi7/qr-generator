@@ -1,8 +1,33 @@
+import type { Metadata } from "next";
 import { Divider } from "@heroui/react";
 import React, { PropsWithChildren } from "react";
 import { Suspense } from "react";
 import ConfigurationSection from "./configuration";
 import OptionsSection from "./options";
+
+export const metadata: Metadata = {
+  title: { default: "QR Studio Workspace | GaweQR", template: "%s | GaweQR" },
+  description:
+    "Build and customize QR codes in the GaweQR Studio workspace with live preview, template data controls, and style options.",
+  alternates: {
+    canonical: "/studio",
+  },
+  openGraph: {
+    title: "QR Studio Workspace | GaweQR",
+    description:
+      "Build and customize QR codes in the GaweQR Studio workspace with live preview, template data controls, and style options.",
+    url: "/studio",
+    images: ["/qr_code.png"],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "QR Studio Workspace | GaweQR",
+    description:
+      "Build and customize QR codes in the GaweQR Studio workspace with live preview, template data controls, and style options.",
+    images: ["/qr_code.png"],
+  },
+};
 
 function QRStudioLayout({ children }: PropsWithChildren) {
   return (

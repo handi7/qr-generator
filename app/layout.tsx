@@ -14,24 +14,43 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "QR Code Generator - Create Custom QR Codes",
+  metadataBase: new URL("https://gaweqr.my.id"),
+  title: {
+    default: "GaweQR - Create Custom QR Codes",
+    template: "%s | GaweQR",
+  },
   description:
-    "Generate personalized QR codes with ease. Customize shapes, colors, margins, and more to suit your needs. Download in PNG format with the desired filename.",
+    "GaweQR helps you generate custom QR codes fast. Design links, WiFi, WhatsApp, contact, and email QR codes, then download in PNG, SVG, JPEG, or WEBP.",
+  applicationName: "GaweQR",
   keywords: [
+    "GaweQR",
     "QR Code Generator",
     "Custom QR Codes",
     "QR Code Maker",
-    "Download QR Code",
-    "PNG QR Code",
+    "WiFi QR Code",
+    "WhatsApp QR Code",
+    "vCard QR Code",
     "Free QR Code Tool",
   ],
   openGraph: {
-    title: "QR Code Generator - Create Custom QR Codes",
+    title: "GaweQR - Create Custom QR Codes",
     description:
-      "Generate personalized QR codes with ease. Customize shapes, colors, margins, and more to suit your needs.",
-    images: ["https://qr.handiani.my.id/qr_code.png"],
-    url: "https://qr.handiani.my.id/",
+      "Generate personalized QR codes with flexible styles and templates for links, WiFi, contact cards, WhatsApp, and email.",
+    images: ["https://gaweqr.my.id/qr_code.png"],
+    url: "https://gaweqr.my.id",
+    siteName: "GaweQR",
+    locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "GaweQR - Create Custom QR Codes",
+    description:
+      "Generate personalized QR codes with flexible styles and templates for links, WiFi, contact cards, WhatsApp, and email.",
+    images: ["https://gaweqr.my.id/qr_code.png"],
+  },
+  alternates: {
+    canonical: "https://gaweqr.my.id",
   },
   robots: {
     follow: true,
