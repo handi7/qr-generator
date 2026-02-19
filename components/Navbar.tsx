@@ -11,12 +11,15 @@ function Navbar() {
 
       <nav className="relative mx-auto flex h-16 w-full items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="group inline-flex items-center gap-3">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-sky-500 text-xs font-bold text-white shadow-md shadow-primary/30 transition-transform duration-300 group-hover:scale-105">
-            QR
+          <span className="relative inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-primary to-sky-500 text-[10px] font-bold text-white shadow-md shadow-primary/30 transition-transform duration-300 group-hover:scale-105">
+            <span className="absolute left-[3px] top-[3px] h-[7px] w-[7px] rounded-[2px] border border-white/85" />
+            <span className="absolute right-[3px] top-[3px] h-[7px] w-[7px] rounded-[2px] border border-white/85" />
+            <span className="absolute bottom-[3px] left-[3px] h-[7px] w-[7px] rounded-[2px] border border-white/85" />
+            <span className="relative z-10 tracking-tight">QR</span>
           </span>
 
           <span className="hidden sm:block">
-            <strong className="block text-sm leading-none">QR Studio</strong>
+            <strong className="block text-sm leading-none">GaweQR</strong>
             <span className="text-xs text-foreground/70">Design and download instantly</span>
           </span>
         </Link>

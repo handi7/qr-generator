@@ -30,7 +30,7 @@ interface DataState {
 }
 
 const defaultData: DataState = {
-  text: "https://handiani.my.id/",
+  text: "https://gaweqr.my.id/",
   margin: "10",
   shape: "square",
   size: "240",
@@ -120,7 +120,7 @@ function ConfigurationSection() {
               const selected = templateOptions.find((item) => item.key === key?.toString());
               const nextType = normalizeTemplateType(key?.toString());
               const nextText =
-                nextType === "email" ? "" : selected?.default || "https://handiani.my.id/";
+                nextType === "email" ? "" : selected?.default || "https://gaweqr.my.id/";
 
               query.reset({
                 text: nextText,
