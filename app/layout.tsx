@@ -22,21 +22,18 @@ export const metadata: Metadata = {
   description:
     "GaweQR helps you generate custom QR codes fast. Design links, WiFi, WhatsApp, contact, and email QR codes, then download in PNG, SVG, JPEG, or WEBP.",
   applicationName: "GaweQR",
-  keywords: [
-    "GaweQR",
-    "QR Code Generator",
-    "Custom QR Codes",
-    "QR Code Maker",
-    "WiFi QR Code",
-    "WhatsApp QR Code",
-    "vCard QR Code",
-    "Free QR Code Tool",
-  ],
   openGraph: {
     title: "GaweQR - Create Custom QR Codes",
     description:
       "Generate personalized QR codes with flexible styles and templates for links, WiFi, contact cards, WhatsApp, and email.",
-    images: ["https://gaweqr.my.id/qr_code.png"],
+    images: [
+      {
+        url: "/qr_code.png",
+        width: 1868,
+        height: 965,
+        alt: "GaweQR custom QR code generator preview",
+      },
+    ],
     url: "https://gaweqr.my.id",
     siteName: "GaweQR",
     locale: "en_US",
@@ -68,7 +65,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="bg-background text-foreground">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>

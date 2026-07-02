@@ -43,7 +43,7 @@ export const templates: Template[] = [
     title: "WhatsApp",
     subtitle: "Conversion",
     description: "Open a WhatsApp chat with prefilled text to speed up inquiries and sales.",
-    href: "/studio?template=wa",
+    href: "/studio?template=whatsapp",
     accent: "from-emerald-500/20 via-green-400/15 to-teal-300/10",
     icon: "message-circle",
     highlights: ["Prefilled message", "Higher engagement", "Simple CTA"],

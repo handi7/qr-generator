@@ -1,9 +1,10 @@
 "use client";
 
+import HeroQr from "@/components/hero-qr";
 import Icon from "@/components/Shared/Icon";
 import { templates } from "@/constants/template.data";
-import { motion } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
+import { ArrowRight, FileDown, Link2, Sparkles, UserRoundCheck } from "lucide-react";
 import Link from "next/link";
 
 const container = {
@@ -17,7 +18,7 @@ const container = {
   },
 };
 
-const item = {
+const item: Variants = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
@@ -65,7 +66,7 @@ export default function HomePageClient() {
           <motion.div variants={item} className="flex flex-wrap items-center gap-3">
             <Link
               href="/studio?template=text"
-              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-white shadow-lg shadow-primary/30 transition-transform duration-200 hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-emerald-950 shadow-lg shadow-primary/30 transition-transform duration-200 hover:-translate-y-0.5"
             >
               Start Creating
               <ArrowRight size={16} />
@@ -78,6 +79,24 @@ export default function HomePageClient() {
               Try Contact vCard
             </Link>
           </motion.div>
+
+          <motion.ul
+            variants={item}
+            className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-foreground/65 sm:text-sm"
+          >
+            <li className="inline-flex items-center gap-1.5">
+              <UserRoundCheck size={14} className="text-primary" />
+              No sign-up needed
+            </li>
+            <li className="inline-flex items-center gap-1.5">
+              <Link2 size={14} className="text-primary" />
+              Designs shareable via URL
+            </li>
+            <li className="inline-flex items-center gap-1.5">
+              <FileDown size={14} className="text-primary" />
+              Free PNG, SVG, JPEG &amp; WEBP export
+            </li>
+          </motion.ul>
         </div>
 
         <motion.div variants={item} className="relative mx-auto w-full max-w-lg">
@@ -89,7 +108,7 @@ export default function HomePageClient() {
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <p className="text-xs text-foreground/65">Live Preview</p>
-                <h2 className="text-lg font-semibold">Contact QR</h2>
+                <p className="text-lg font-semibold">Contact QR</p>
               </div>
               <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-500">
                 Ready to scan
@@ -98,15 +117,8 @@ export default function HomePageClient() {
 
             <div className="grid gap-4 sm:grid-cols-[160px_1fr] sm:items-center">
               <div className="mx-auto h-40 w-40 rounded-2xl border border-foreground/10 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(25,194,160,0.18),rgba(66,103,178,0.25),rgba(25,194,160,0.18))] p-3">
-                <div className="h-full w-full rounded-xl bg-background/90 p-3">
-                  <div className="grid h-full w-full grid-cols-5 gap-1">
-                    {Array.from({ length: 25 }).map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={`rounded-sm ${idx % 2 === 0 || idx % 7 === 0 ? "bg-foreground" : "bg-foreground/20"}`}
-                      />
-                    ))}
-                  </div>
+                <div className="h-full w-full rounded-xl bg-background/90 p-2.5">
+                  <HeroQr className="h-full w-full text-foreground" />
                 </div>
               </div>
 
@@ -129,9 +141,9 @@ export default function HomePageClient() {
         viewport={{ once: true, amount: 0.2 }}
         className="mx-auto mt-16 w-full max-w-7xl"
       >
-        <motion.h3 variants={item} className="mb-5 text-xl font-semibold sm:text-2xl">
+        <motion.h2 variants={item} className="mb-5 text-xl font-semibold sm:text-2xl">
           What You Can Generate
-        </motion.h3>
+        </motion.h2>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {featuredTemplates.map((template) => {
@@ -144,7 +156,7 @@ export default function HomePageClient() {
                   <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
                     <Icon name={template.icon} size={18} />
                   </span>
-                  <h4 className="mb-2 text-base font-semibold">{template.title}</h4>
+                  <h3 className="mb-2 text-base font-semibold">{template.title}</h3>
                   <p className="text-sm text-foreground/70">{template.description}</p>
                 </Link>
               </motion.div>
@@ -164,6 +176,52 @@ export default function HomePageClient() {
       </motion.section>
 
       <motion.section
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        className="mx-auto mt-16 w-full max-w-7xl"
+      >
+        <motion.h2 variants={item} className="mb-5 text-xl font-semibold sm:text-2xl">
+          How It Works
+        </motion.h2>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              step: "1",
+              title: "Pick a template",
+              description: "Start from a link, WiFi, WhatsApp, contact, or email template.",
+            },
+            {
+              step: "2",
+              title: "Style it in Studio",
+              description:
+                "Tune colors, dot shapes, corners, and margins with a live preview of every change.",
+            },
+            {
+              step: "3",
+              title: "Download & share",
+              description:
+                "Export in PNG, SVG, JPEG, or WEBP. Every style setting stays in the URL, so anyone opening your link sees the same design.",
+            },
+          ].map((step) => (
+            <motion.div
+              key={step.step}
+              variants={item}
+              className="rounded-2xl border border-foreground/10 bg-background/70 p-5 backdrop-blur"
+            >
+              <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-base font-semibold text-primary">
+                {step.step}
+              </span>
+              <h3 className="mb-2 text-base font-semibold">{step.title}</h3>
+              <p className="text-sm text-foreground/70">{step.description}</p>
+            </motion.div>
+          ))}
+        </div>
+      </motion.section>
+
+      <motion.section
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
@@ -171,14 +229,14 @@ export default function HomePageClient() {
         className="mx-auto mt-16 w-full max-w-5xl"
       >
         <div className="rounded-3xl border border-primary/20 bg-gradient-to-r from-primary/15 via-sky-400/10 to-emerald-300/15 px-6 py-8 text-center backdrop-blur sm:px-8">
-          <h5 className="text-2xl font-semibold">Ready to ship your next QR campaign?</h5>
+          <h2 className="text-2xl font-semibold">Ready to ship your next QR campaign?</h2>
           <p className="mx-auto mt-2 max-w-2xl text-sm text-foreground/75 sm:text-base">
             Start with one template, tweak colors and shapes, then download instantly in PNG, SVG,
             JPEG, or WEBP.
           </p>
           <Link
-            href="/?template=text"
-            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-medium text-white shadow-lg shadow-primary/25 transition-transform duration-200 hover:-translate-y-0.5"
+            href="/studio?template=text"
+            className="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-emerald-950 shadow-lg shadow-primary/25 transition-transform duration-200 hover:-translate-y-0.5"
           >
             Launch Generator
             <ArrowRight size={16} />

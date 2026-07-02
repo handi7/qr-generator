@@ -3,7 +3,9 @@ import { MetadataRoute } from "next";
 const baseUrl = "https://gaweqr.my.id";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+  // Bump this when page content meaningfully changes; a build timestamp
+  // makes lastmod meaningless to crawlers.
+  const now = new Date("2026-07-03");
 
   return [
     {

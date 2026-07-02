@@ -1,0 +1,22 @@
+type HeroQrProps = {
+  className?: string;
+};
+
+// Real, scannable QR encoding the John Doe demo vCard shown next to it in the
+// landing hero. Regenerate with `qrcode` if the demo contact changes.
+const QR_PATH =
+  "M0 0.5h7m1 0h2m1 0h1m2 0h1m1 0h1m3 0h1m3 0h1m1 0h1m1 0h4m4 0h1m1 0h7M0 1.5h1m5 0h1m1 0h5m1 0h1m1 0h1m2 0h1m1 0h5m2 0h1m2 0h1m3 0h1m2 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1m5 0h5m2 0h5m1 0h2m1 0h1m2 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h2m1 0h1m1 0h1m4 0h1m5 0h4m1 0h1m1 0h1m1 0h2m1 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m2 0h1m5 0h1m4 0h5m1 0h1m1 0h3m2 0h4m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h4m1 0h1m3 0h4m3 0h1m1 0h2m10 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M11 7.5h2m1 0h4m2 0h1m3 0h5m1 0h1m3 0h1M0 8.5h2m2 0h3m2 0h3m1 0h2m1 0h3m1 0h5m2 0h1m1 0h1m2 0h1m3 0h1m2 0h1m1 0h4M3 9.5h1m5 0h1m3 0h4m5 0h2m2 0h1m1 0h3m4 0h1m1 0h2m4 0h2M0 10.5h3m2 0h3m2 0h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h1m3 0h2m1 0h2m1 0h6m1 0h1M0 11.5h2m2 0h2m1 0h4m3 0h1m3 0h1m3 0h2m1 0h1m4 0h1m1 0h2m1 0h1m2 0h1m4 0h1M0 12.5h1m1 0h1m2 0h2m3 0h9m1 0h2m2 0h1m1 0h2m4 0h1m1 0h4m6 0h1M7 13.5h1m1 0h2m1 0h4m1 0h1m2 0h1m1 0h3m1 0h2m1 0h3m3 0h4m2 0h1m1 0h2M0 14.5h2m1 0h2m1 0h1m1 0h1m2 0h1m1 0h2m5 0h2m3 0h1m2 0h2m2 0h3m3 0h1m4 0h1M1 15.5h2m2 0h1m6 0h1m1 0h1m4 0h1m1 0h4m1 0h1m2 0h4m1 0h2m1 0h1m1 0h2m1 0h1M1 16.5h1m1 0h1m2 0h2m2 0h1m1 0h1m2 0h4m1 0h1m1 0h1m2 0h2m3 0h3m7 0h1m2 0h2M0 17.5h1m1 0h2m5 0h1m3 0h5m2 0h2m1 0h1m2 0h1m1 0h3m1 0h2m1 0h1m2 0h1m1 0h2m1 0h2M2 18.5h5m2 0h1m1 0h2m1 0h1m1 0h2m2 0h3m3 0h1m2 0h3m1 0h4m1 0h7M1 19.5h1m1 0h1m6 0h1m3 0h1m1 0h4m2 0h2m3 0h1m1 0h1m2 0h2m4 0h3m2 0h1M0 20.5h2m1 0h6m3 0h1m1 0h1m1 0h1m1 0h1m1 0h6m1 0h1m2 0h1m1 0h1m1 0h7m3 0h1M1 21.5h1m1 0h2m3 0h2m3 0h3m3 0h2m3 0h1m1 0h1m2 0h3m1 0h1m1 0h2m3 0h1m2 0h1M3 22.5h2m1 0h1m1 0h2m1 0h1m3 0h2m2 0h2m1 0h1m1 0h1m3 0h3m1 0h5m1 0h1m1 0h1m1 0h1M1 23.5h4m3 0h6m3 0h4m3 0h5m1 0h1m1 0h1m1 0h3m3 0h1m1 0h2M4 24.5h5m3 0h5m1 0h8m1 0h1m4 0h2m2 0h6m2 0h1M1 25.5h4m3 0h4m2 0h1m1 0h1m1 0h1m4 0h4m1 0h1m1 0h1m4 0h2m2 0h1m2 0h1m1 0h1M0 26.5h1m2 0h4m2 0h1m1 0h5m1 0h1m2 0h1m2 0h1m2 0h1m1 0h1m1 0h6m4 0h1m1 0h3M0 27.5h2m1 0h2m2 0h2m3 0h3m2 0h1m1 0h1m3 0h1m1 0h3m1 0h1m1 0h2m1 0h2m1 0h1m2 0h2m1 0h2M0 28.5h3m3 0h2m2 0h1m3 0h1m1 0h5m2 0h5m1 0h5m1 0h4M0 29.5h1m3 0h1m3 0h1m2 0h2m1 0h2m2 0h1m3 0h5m1 0h6m1 0h5m3 0h1M3 30.5h2m1 0h1m6 0h2m1 0h3m1 0h1m3 0h3m2 0h9m1 0h2m2 0h1M0 31.5h1m2 0h2m3 0h1m2 0h1m2 0h1m1 0h4m1 0h2m4 0h4m1 0h2m2 0h1m1 0h3m1 0h2M2 32.5h1m1 0h1m1 0h2m3 0h2m5 0h2m1 0h1m2 0h4m1 0h1m2 0h1m1 0h1m2 0h2m2 0h2M0 33.5h2m1 0h1m1 0h1m1 0h2m1 0h1m1 0h4m3 0h1m3 0h2m1 0h1m1 0h1m1 0h4m1 0h5m1 0h1m2 0h1M4 34.5h1m1 0h1m1 0h3m5 0h1m6 0h2m2 0h1m2 0h2m1 0h2m4 0h4m1 0h1M1 35.5h4m2 0h1m3 0h1m2 0h1m2 0h1m1 0h1m6 0h2m1 0h1m5 0h2m1 0h1m1 0h2m1 0h1M0 36.5h1m2 0h2m1 0h1m5 0h1m1 0h1m1 0h3m1 0h6m3 0h1m2 0h2m2 0h5m1 0h1m1 0h1M8 37.5h1m1 0h6m3 0h2m3 0h1m1 0h2m1 0h2m1 0h2m1 0h2m3 0h2m1 0h1M0 38.5h7m2 0h4m2 0h1m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m1 0h3m1 0h3m1 0h1m1 0h1m1 0h1m2 0h1M0 39.5h1m5 0h1m1 0h2m1 0h3m2 0h2m1 0h2m3 0h2m1 0h4m4 0h2m3 0h2m1 0h2M0 40.5h1m1 0h3m1 0h1m1 0h1m1 0h1m1 0h3m2 0h10m2 0h1m2 0h1m1 0h8m1 0h2M0 41.5h1m1 0h3m1 0h1m3 0h2m2 0h1m1 0h1m1 0h1m1 0h2m1 0h1m2 0h3m1 0h2m3 0h1m2 0h1m4 0h2M0 42.5h1m1 0h3m1 0h1m3 0h4m1 0h1m5 0h1m2 0h1m1 0h2m2 0h1m1 0h1m5 0h5M0 43.5h1m5 0h1m1 0h1m3 0h4m3 0h2m1 0h1m1 0h1m1 0h2m2 0h1m2 0h3m1 0h2m1 0h1m3 0h1M0 44.5h7m1 0h1m1 0h2m1 0h9m1 0h5m1 0h2m1 0h2m1 0h2m1 0h2m1 0h4";
+
+export default function HeroQr({ className }: HeroQrProps) {
+  return (
+    <svg
+      viewBox="0 0 45 45"
+      role="img"
+      aria-label="Scannable QR code containing the John Doe demo contact card"
+      shapeRendering="crispEdges"
+      className={className}
+    >
+      <path d={QR_PATH} stroke="currentColor" strokeWidth={1} fill="none" />
+    </svg>
+  );
+}
