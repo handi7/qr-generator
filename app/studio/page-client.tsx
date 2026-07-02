@@ -89,9 +89,5 @@ export default function QRStudio() {
     setOptions((prev) => getOptions(prev));
   }, [text, currentType, getOptions]);
 
-  return (
-    <div className="w-full flex flex-col items-center">
-      <QrCode data={data} options={options} />
-    </div>
-  );
+  return <QrCode data={data} options={options} />;
 }

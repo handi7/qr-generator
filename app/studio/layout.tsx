@@ -1,61 +1,41 @@
-import type { Metadata } from "next";
 import { Divider } from "@heroui/react";
-import React, { PropsWithChildren } from "react";
-import { Suspense } from "react";
+import React, { PropsWithChildren, Suspense } from "react";
 import ConfigurationSection from "./configuration";
 import OptionsSection from "./options";
 
-export const metadata: Metadata = {
-  title: { default: "QR Studio Workspace | GaweQR", template: "%s | GaweQR" },
-  description:
-    "Build and customize QR codes in the GaweQR Studio workspace with live preview, template data controls, and style options.",
-  alternates: {
-    canonical: "/studio",
-  },
-  openGraph: {
-    title: "QR Studio Workspace | GaweQR",
-    description:
-      "Build and customize QR codes in the GaweQR Studio workspace with live preview, template data controls, and style options.",
-    url: "/studio",
-    images: ["/qr_code.png"],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "QR Studio Workspace | GaweQR",
-    description:
-      "Build and customize QR codes in the GaweQR Studio workspace with live preview, template data controls, and style options.",
-    images: ["/qr_code.png"],
-  },
-};
+const panelFallback = (
+  <div className="h-64 w-full animate-pulse rounded-3xl border border-foreground/10 bg-content1/60" />
+);
 
 function QRStudioLayout({ children }: PropsWithChildren) {
   return (
-    <Suspense fallback={<div className="w-full max-w-md" />}>
-      <div className="relative min-h-[100dvh] w-full overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute -left-20 top-20 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
-          <div className="absolute right-0 top-10 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl" />
-          <div className="absolute bottom-0 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-emerald-400/10 blur-3xl" />
+    <div className="relative min-h-[100dvh] w-full overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -left-20 top-20 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
+        <div className="absolute right-0 top-10 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl" />
+        <div className="absolute bottom-0 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-emerald-400/10 blur-3xl" />
+      </div>
+
+      <div className="mx-auto flex h-full w-full max-w-[1600px] flex-col items-center gap-5 px-4 py-6 sm:px-6 xl:flex-row xl:items-start xl:justify-center">
+        <div className="order-1 w-full xl:order-2 xl:flex xl:max-w-[740px] xl:justify-center">
+          {children}
         </div>
 
-        <div className="mx-auto flex h-full w-full max-w-[1600px] flex-col items-center gap-5 px-4 py-6 sm:px-6 xl:flex-row xl:items-start xl:justify-center">
-          <div className="w-full xl:hidden">{children}</div>
+        <Divider className="order-2 xl:hidden" />
 
-          <Divider className="xl:hidden" />
-
-          <div className="w-full xl:w-[360px] xl:min-w-[360px] xl:sticky xl:top-20">
+        <div className="order-3 w-full xl:order-1 xl:w-[360px] xl:min-w-[360px] xl:sticky xl:top-20">
+          <Suspense fallback={panelFallback}>
             <ConfigurationSection />
-          </div>
+          </Suspense>
+        </div>
 
-          <div className="hidden w-full xl:flex xl:max-w-[740px] xl:justify-center">{children}</div>
-
-          <div className="w-full xl:w-[360px] xl:min-w-[360px] xl:sticky xl:top-10 xl:max-h-[calc(100dvh-6rem)] xl:overflow-auto scrollbar-hide">
+        <div className="order-4 w-full xl:order-3 xl:w-[360px] xl:min-w-[360px] xl:sticky xl:top-10 xl:max-h-[calc(100dvh-6rem)] xl:overflow-auto scrollbar-hide">
+          <Suspense fallback={panelFallback}>
             <OptionsSection />
-          </div>
+          </Suspense>
         </div>
       </div>
-    </Suspense>
+    </div>
   );
 }
 

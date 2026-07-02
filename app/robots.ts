@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     sitemap: "https://gaweqr.my.id/sitemap.xml",
     rules: [
       {
-        userAgent: ["Googlebot", "Applebot", "Bingbot"],
+        userAgent: "*",
         allow: ["/"],
       },
     ],

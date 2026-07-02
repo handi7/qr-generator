@@ -13,7 +13,16 @@ export const metadata: Metadata = {
     description:
       "Explore ready-to-use QR templates for links, WiFi, WhatsApp, contacts, and email. Start faster with GaweQR templates.",
     url: "/templates",
-    images: ["/qr_code.png"],
+    siteName: "GaweQR",
+    locale: "en_US",
+    images: [
+      {
+        url: "/qr_code.png",
+        width: 1868,
+        height: 965,
+        alt: "GaweQR ready-to-use QR code templates",
+      },
+    ],
     type: "website",
   },
   twitter: {
