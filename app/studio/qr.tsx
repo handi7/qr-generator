@@ -4,11 +4,12 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/react";
 import { Select, SelectItem } from "@heroui/select";
 import { motion } from "framer-motion";
-import { Download, QrCode as QrCodeIcon, Sparkles } from "lucide-react";
+import { Copy, Download, Link2, QrCode as QrCodeIcon, Share2, Sparkles } from "lucide-react";
 import QRCodeStyling, { FileExtension, Options } from "qr-code-styling";
 import { useEffect, useRef, useState } from "react";
 
 import LinkOrText from "@/components/link-or-text";
+import useShareQr from "@/hokks/useShareQr";
 
 type QrCodeProps = {
   data: string;
@@ -21,6 +22,11 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
 
   const [extension, setExtension] = useState<FileExtension>("png");
   const [name, setName] = useState<string>("qr");
+
+  const { canShareImage, canCopyImage, prepare, shareImage, copyImage, copyLink } = useShareQr(
+    qrCode,
+    name,
+  );
 
   const onDownloadClick = () => {
     qrCode.current?.download({ name, extension });
@@ -48,7 +54,10 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
     if (qrCodeRef.current) {
       qrCode.current.append(qrCodeRef.current);
     }
-  }, [data, options]);
+
+    // Cache the PNG now so the share button never has to await it on click.
+    prepare();
+  }, [data, options, prepare]);
 
   return (
     <motion.div
@@ -94,7 +103,7 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
             <LinkOrText data={data} className="break-all text-center text-xs sm:text-sm" />
           </div>
 
-          <div className="grid w-full gap-3 md:grid-cols-[1fr_180px_auto] md:items-end">
+          <div className="grid w-full gap-3 md:grid-cols-[1fr_180px] md:items-end">
             <Input
               size="sm"
               radius="sm"
@@ -116,12 +125,43 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
               <SelectItem key="svg">SVG</SelectItem>
               <SelectItem key="webp">WEBP</SelectItem>
             </Select>
+          </div>
 
-            <Button size="sm" color="primary" onPress={onDownloadClick} className="md:min-w-28">
+          <div className="flex w-full flex-wrap gap-2">
+            <Button size="sm" color="primary" onPress={onDownloadClick} className="min-w-28">
               <Download size={14} />
               Download
             </Button>
+
+            {/* Both image actions depend on browser support detected after
+                mount, so neither renders during SSR. Share is preferred; the
+                clipboard is the stand-in where Web Share can't take files. */}
+            {canShareImage && (
+              <Button size="sm" color="primary" variant="flat" onPress={shareImage}>
+                <Share2 size={14} />
+                Share
+              </Button>
+            )}
+
+            {!canShareImage && canCopyImage && (
+              <Button size="sm" color="primary" variant="flat" onPress={copyImage}>
+                <Copy size={14} />
+                Copy image
+              </Button>
+            )}
+
+            <Button size="sm" variant="flat" onPress={copyLink}>
+              <Link2 size={14} />
+              Copy link
+            </Button>
           </div>
+
+          {!!options?.image && (
+            <p className="w-full text-center text-xs text-foreground/60">
+              A copied link carries every style setting, but not the uploaded logo — an image
+              can&apos;t be encoded in a URL.
+            </p>
+          )}
         </div>
       </div>
     </motion.div>
