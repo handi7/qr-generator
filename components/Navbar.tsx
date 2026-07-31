@@ -35,6 +35,14 @@ function Navbar() {
           </Link>
 
           <Link
+            key="My QR"
+            href="/my-qr"
+            className="rounded-lg px-3 py-2 text-sm text-foreground/80 transition-colors duration-200 hover:bg-foreground/5 hover:text-foreground"
+          >
+            My QR
+          </Link>
+
+          <Link
             href="/studio"
             className="inline-flex items-center rounded-lg border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary transition-all duration-200 hover:bg-primary/15 sm:text-sm"
           >

@@ -115,7 +115,13 @@ function useShareQr(qrCode: RefObject<QRCodeStyling | null>, filename: string): 
 
   const copyLink = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(window.location.href);
+      const url = new URL(window.location.href);
+
+      // `id` names a record in this browser's storage. Sending it on would point
+      // the recipient at something that doesn't exist on their device.
+      url.searchParams.delete("id");
+
+      await navigator.clipboard.writeText(url.toString());
       addToast({
         title: "Link copied",
         description: "Opens this QR in Studio, ready to edit.",

@@ -124,10 +124,14 @@ function ConfigurationSection() {
               const nextType = normalizeTemplateType(key?.toString());
 
               // reset() drops every param, so the outgoing template can't leave
-              // its own fields behind in the URL.
+              // its own fields behind in the URL. `id` is carried over on
+              // purpose: it is the saved record's identity, not its content, so
+              // changing template should still update that record rather than
+              // quietly detach from it.
               query.reset({
                 text: codecs[nextType].defaultText,
                 template: nextType,
+                id: query.get("id") || undefined,
               });
             }}
           >

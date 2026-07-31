@@ -15,8 +15,12 @@ interface States {
 
 interface Actions {
   restoreImage: () => Promise<void>;
-  /** False when the logo is usable this session but won't survive a reload. */
-  setImage: (file: File) => Promise<boolean>;
+  /**
+   * Takes a Blob rather than a File so opening a saved code can hand over the
+   * logo it stored. False when the logo is usable this session but won't
+   * survive a reload.
+   */
+  setImage: (blob: Blob) => Promise<boolean>;
   removeImage: () => Promise<void>;
 }
 
@@ -36,11 +40,11 @@ export const useImageStore = create<States & Actions>((set, get) => ({
     if (stored) set({ image: URL.createObjectURL(stored) });
   },
 
-  setImage: async (file) => {
-    const persisted = await writeLogo(file);
+  setImage: async (blob) => {
+    const persisted = await writeLogo(blob);
     const previous = get().image;
 
-    set({ image: URL.createObjectURL(file), isRestored: true });
+    set({ image: URL.createObjectURL(blob), isRestored: true });
 
     // Only the previous render referenced this; holding it would leak the blob
     // for the lifetime of the document.

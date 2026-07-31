@@ -4,11 +4,20 @@ import { Button } from "@heroui/button";
 import { Input } from "@heroui/react";
 import { Select, SelectItem } from "@heroui/select";
 import { motion } from "framer-motion";
-import { Copy, Download, Link2, QrCode as QrCodeIcon, Share2, Sparkles } from "lucide-react";
+import {
+  Bookmark,
+  Copy,
+  Download,
+  Link2,
+  QrCode as QrCodeIcon,
+  Share2,
+  Sparkles,
+} from "lucide-react";
 import QRCodeStyling, { FileExtension, Options } from "qr-code-styling";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 import LinkOrText from "@/components/link-or-text";
+import SaveQrButton from "@/components/save-qr-button";
 import useShareQr from "@/hokks/useShareQr";
 
 type QrCodeProps = {
@@ -154,6 +163,21 @@ const QrCode: React.FC<QrCodeProps> = ({ data, options }) => {
               <Link2 size={14} />
               Copy link
             </Button>
+
+            {/* Its own boundary: this card also serves as the Suspense fallback
+                on /studio, and a fallback renders outside the parent boundary —
+                so the useSearchParams() inside would bail out of prerendering.
+                The placeholder keeps the row from shifting. */}
+            <Suspense
+              fallback={
+                <Button size="sm" color="primary" variant="flat" isDisabled>
+                  <Bookmark size={14} />
+                  Save
+                </Button>
+              }
+            >
+              <SaveQrButton data={data} options={options} name={name} />
+            </Suspense>
           </div>
 
           {!!options?.image && (
