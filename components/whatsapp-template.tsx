@@ -1,7 +1,8 @@
 "use client";
 
-import { Input, Textarea } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { Input, Textarea } from "@heroui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -40,11 +41,13 @@ function WhatsappTemplate() {
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
     onChange(name, value);
   };
 
   useEffect(() => {
     const parsed = parseWhatsappQR(text);
+
     if (parsed) setData(parsed);
   }, []);
 
@@ -72,6 +75,7 @@ function WhatsappTemplate() {
 function parseWhatsappQR(qrString: string): WhatsappState | null {
   try {
     const url = new URL(qrString);
+
     if (!url.hostname.includes("wa.me")) return null;
 
     const phone = url.pathname.replace("/", "");

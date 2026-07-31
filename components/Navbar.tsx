@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+
 import React from "react";
-import BrandMark from "./brand-mark";
+
 import ThemeSwitch from "./ThemeSwitch";
+import BrandMark from "./brand-mark";
 
 function Navbar() {
   return (

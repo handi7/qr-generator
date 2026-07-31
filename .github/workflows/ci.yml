@@ -30,8 +30,13 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      # Not `npm run lint`: that script runs `eslint --fix`, which would mutate
+      # files in CI and let violations pass silently.
       - name: Lint
-        run: npm run lint
+        run: npx eslint .
+
+      - name: Check formatting
+        run: npm run format:check
 
       - name: Build
         run: npm run build

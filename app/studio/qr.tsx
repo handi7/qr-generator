@@ -1,13 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import QRCodeStyling, { FileExtension, Options } from "qr-code-styling";
 import { Button } from "@heroui/button";
-import { Select, SelectItem } from "@heroui/select";
 import { Input } from "@heroui/react";
-import LinkOrText from "@/components/link-or-text";
+import { Select, SelectItem } from "@heroui/select";
+import { motion } from "framer-motion";
 import { Download, QrCode as QrCodeIcon, Sparkles } from "lucide-react";
+import QRCodeStyling, { FileExtension, Options } from "qr-code-styling";
+import { useEffect, useRef, useState } from "react";
+
+import LinkOrText from "@/components/link-or-text";
 
 type QrCodeProps = {
   data: string;

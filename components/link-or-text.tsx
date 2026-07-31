@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, Link } from "@heroui/react";
+import { Link, cn } from "@heroui/react";
 
 interface Props {
   data: string;

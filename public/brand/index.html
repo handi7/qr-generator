@@ -1,196 +1,435 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="robots" content="noindex" />
-<title>GaweQR Brand Mark</title>
-<link rel="icon" href="./brand-mark.svg" type="image/svg+xml" />
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  img, svg { display: block; max-width: 100%; }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>GaweQR Brand Mark</title>
+    <link rel="icon" href="./brand-mark.svg" type="image/svg+xml" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      img,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
 
-  :root {
-    --ink: #16232b;
-    --muted: #5c6f75;
-    --line: #e3eaec;
-    --ground: #f7fafa;
-    --card: #ffffff;
-    --dark: #0b1520;
-    --teal: #19c2a0;
-    --sky: #0ea5e9;
-  }
-  body {
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--ground);
-    color: var(--ink);
-    line-height: 1.55;
-  }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 56px 24px 80px; }
-  header { margin-bottom: 40px; }
-  .eyebrow {
-    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--teal); font-weight: 600; margin-bottom: 8px;
-  }
-  h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 6px; text-wrap: balance; }
-  header p { color: var(--muted); max-width: 60ch; }
-  h2 { font-size: 15px; font-weight: 600; margin: 40px 0 14px; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
-  .tile {
-    border: 1px solid var(--line); border-radius: 14px; background: var(--card);
-    display: flex; align-items: center; justify-content: center;
-    min-height: 200px; position: relative;
-  }
-  .tile.dark { background: var(--dark); border-color: #1d2c3a; }
-  .tile .tag {
-    position: absolute; top: 12px; left: 14px; font-size: 11px;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
-  }
-  .tile.dark .tag { color: #7d93a3; }
-  .row {
-    border: 1px solid var(--line); border-radius: 14px; background: var(--card);
-    padding: 28px; display: flex; align-items: flex-end; gap: 36px; flex-wrap: wrap;
-  }
-  .size { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-  .size span { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .lockup { display: inline-flex; align-items: center; gap: 12px; }
-  .lockup .name { display: flex; flex-direction: column; }
-  .lockup strong { font-size: 15px; line-height: 1.1; letter-spacing: -0.01em; }
-  .lockup small { font-size: 12px; color: var(--muted); }
-  .tile.dark .lockup strong { color: #f2f7f7; }
-  .tile.dark .lockup small { color: #90a5b3; }
-  table {
-    width: 100%; border-collapse: collapse; background: var(--card);
-    border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
-    font-size: 14px;
-  }
-  th, td { text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--line); }
-  tr:last-child td { border-bottom: none; }
-  th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-  td a { color: var(--sky); text-decoration: none; }
-  td a:hover, td a:focus-visible { text-decoration: underline; }
-  code {
-    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 12.5px;
-    background: #ecf3f2; border-radius: 5px; padding: 2px 6px; color: var(--ink);
-  }
-  .table-scroll { overflow-x: auto; border-radius: 14px; }
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <div class="eyebrow">GaweQR · Visual identity</div>
-    <h1>Brand mark</h1>
-    <p>A QR code distilled to its signature: three finder-pattern corners plus a cluster of
-    data modules, on the product's teal-to-sky gradient. Reads as "QR" instantly, at any size.</p>
-  </header>
+      :root {
+        --ink: #16232b;
+        --muted: #5c6f75;
+        --line: #e3eaec;
+        --ground: #f7fafa;
+        --card: #ffffff;
+        --dark: #0b1520;
+        --teal: #19c2a0;
+        --sky: #0ea5e9;
+      }
+      body {
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+        background: var(--ground);
+        color: var(--ink);
+        line-height: 1.55;
+      }
+      .wrap {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 56px 24px 80px;
+      }
+      header {
+        margin-bottom: 40px;
+      }
+      .eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--teal);
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 6px;
+        text-wrap: balance;
+      }
+      header p {
+        color: var(--muted);
+        max-width: 60ch;
+      }
+      h2 {
+        font-size: 15px;
+        font-weight: 600;
+        margin: 40px 0 14px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      @media (max-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .tile {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 200px;
+        position: relative;
+      }
+      .tile.dark {
+        background: var(--dark);
+        border-color: #1d2c3a;
+      }
+      .tile .tag {
+        position: absolute;
+        top: 12px;
+        left: 14px;
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+      .tile.dark .tag {
+        color: #7d93a3;
+      }
+      .row {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        padding: 28px;
+        display: flex;
+        align-items: flex-end;
+        gap: 36px;
+        flex-wrap: wrap;
+      }
+      .size {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      .size span {
+        font-size: 11px;
+        color: var(--muted);
+        font-variant-numeric: tabular-nums;
+      }
+      .lockup {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .lockup .name {
+        display: flex;
+        flex-direction: column;
+      }
+      .lockup strong {
+        font-size: 15px;
+        line-height: 1.1;
+        letter-spacing: -0.01em;
+      }
+      .lockup small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .tile.dark .lockup strong {
+        color: #f2f7f7;
+      }
+      .tile.dark .lockup small {
+        color: #90a5b3;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        overflow: hidden;
+        font-size: 14px;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px 16px;
+        border-bottom: 1px solid var(--line);
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      th {
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      td a {
+        color: var(--sky);
+        text-decoration: none;
+      }
+      td a:hover,
+      td a:focus-visible {
+        text-decoration: underline;
+      }
+      code {
+        font-family: ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 12.5px;
+        background: #ecf3f2;
+        border-radius: 5px;
+        padding: 2px 6px;
+        color: var(--ink);
+      }
+      .table-scroll {
+        overflow-x: auto;
+        border-radius: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="eyebrow">GaweQR · Visual identity</div>
+        <h1>Brand mark</h1>
+        <p>
+          A QR code distilled to its signature: three finder-pattern corners plus a cluster of data
+          modules, on the product's teal-to-sky gradient. Reads as "QR" instantly, at any size.
+        </p>
+      </header>
 
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <defs>
-      <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="#19C2A0"/><stop offset="1" stop-color="#0EA5E9"/>
-      </linearGradient>
-      <linearGradient id="shine" x1="32" y1="0" x2="32" y2="34" gradientUnits="userSpaceOnUse">
-        <stop offset="0" stop-color="white" stop-opacity="0.18"/><stop offset="1" stop-color="white" stop-opacity="0"/>
-      </linearGradient>
-      <g id="mark">
-        <rect width="64" height="64" rx="16" fill="url(#bg)"/>
-        <rect width="64" height="64" rx="16" fill="url(#shine)"/>
-        <rect x="11.5" y="11.5" width="15" height="15" rx="5" stroke="white" stroke-width="3" fill="none"/>
-        <rect x="16.5" y="16.5" width="5" height="5" rx="1.5" fill="white"/>
-        <rect x="37.5" y="11.5" width="15" height="15" rx="5" stroke="white" stroke-width="3" fill="none"/>
-        <rect x="42.5" y="16.5" width="5" height="5" rx="1.5" fill="white"/>
-        <rect x="11.5" y="37.5" width="15" height="15" rx="5" stroke="white" stroke-width="3" fill="none"/>
-        <rect x="16.5" y="42.5" width="5" height="5" rx="1.5" fill="white"/>
-        <rect x="37" y="37" width="6" height="6" rx="2" fill="white"/>
-        <rect x="47" y="37" width="6" height="6" rx="2" fill="white" fill-opacity="0.7"/>
-        <rect x="42" y="42" width="6" height="6" rx="2" fill="white"/>
-        <rect x="37" y="47" width="6" height="6" rx="2" fill="white" fill-opacity="0.7"/>
-        <rect x="47" y="47" width="6" height="6" rx="2" fill="white"/>
-      </g>
-    </defs>
-  </svg>
+      <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#19C2A0" />
+            <stop offset="1" stop-color="#0EA5E9" />
+          </linearGradient>
+          <linearGradient id="shine" x1="32" y1="0" x2="32" y2="34" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="white" stop-opacity="0.18" />
+            <stop offset="1" stop-color="white" stop-opacity="0" />
+          </linearGradient>
+          <g id="mark">
+            <rect width="64" height="64" rx="16" fill="url(#bg)" />
+            <rect width="64" height="64" rx="16" fill="url(#shine)" />
+            <rect
+              x="11.5"
+              y="11.5"
+              width="15"
+              height="15"
+              rx="5"
+              stroke="white"
+              stroke-width="3"
+              fill="none"
+            />
+            <rect x="16.5" y="16.5" width="5" height="5" rx="1.5" fill="white" />
+            <rect
+              x="37.5"
+              y="11.5"
+              width="15"
+              height="15"
+              rx="5"
+              stroke="white"
+              stroke-width="3"
+              fill="none"
+            />
+            <rect x="42.5" y="16.5" width="5" height="5" rx="1.5" fill="white" />
+            <rect
+              x="11.5"
+              y="37.5"
+              width="15"
+              height="15"
+              rx="5"
+              stroke="white"
+              stroke-width="3"
+              fill="none"
+            />
+            <rect x="16.5" y="42.5" width="5" height="5" rx="1.5" fill="white" />
+            <rect x="37" y="37" width="6" height="6" rx="2" fill="white" />
+            <rect x="47" y="37" width="6" height="6" rx="2" fill="white" fill-opacity="0.7" />
+            <rect x="42" y="42" width="6" height="6" rx="2" fill="white" />
+            <rect x="37" y="47" width="6" height="6" rx="2" fill="white" fill-opacity="0.7" />
+            <rect x="47" y="47" width="6" height="6" rx="2" fill="white" />
+          </g>
+        </defs>
+      </svg>
 
-  <h2>On light and dark</h2>
-  <div class="grid">
-    <div class="tile">
-      <span class="tag">Light</span>
-      <svg width="112" height="112" viewBox="0 0 64 64"><use href="#mark"/></svg>
-    </div>
-    <div class="tile dark">
-      <span class="tag">Dark</span>
-      <svg width="112" height="112" viewBox="0 0 64 64"><use href="#mark"/></svg>
-    </div>
-  </div>
+      <h2>On light and dark</h2>
+      <div class="grid">
+        <div class="tile">
+          <span class="tag">Light</span>
+          <svg width="112" height="112" viewBox="0 0 64 64"><use href="#mark" /></svg>
+        </div>
+        <div class="tile dark">
+          <span class="tag">Dark</span>
+          <svg width="112" height="112" viewBox="0 0 64 64"><use href="#mark" /></svg>
+        </div>
+      </div>
 
-  <h2>Glyph variants</h2>
-  <div class="grid">
-    <div class="tile">
-      <span class="tag">Gradient glyph</span>
-      <img src="./brand-mark-glyph-gradient.svg" alt="Gradient glyph on light background" width="96" height="96" />
-    </div>
-    <div class="tile dark">
-      <span class="tag">White glyph</span>
-      <img src="./brand-mark-white.svg" alt="White glyph on dark background" width="96" height="96" />
-    </div>
-    <div class="tile">
-      <span class="tag">Black glyph</span>
-      <img src="./brand-mark-black.svg" alt="Black glyph on light background" width="96" height="96" />
-    </div>
-    <div class="tile">
-      <span class="tag">Tile</span>
-      <img src="./brand-mark.svg" alt="Gradient tile mark" width="96" height="96" />
-    </div>
-  </div>
+      <h2>Glyph variants</h2>
+      <div class="grid">
+        <div class="tile">
+          <span class="tag">Gradient glyph</span>
+          <img
+            src="./brand-mark-glyph-gradient.svg"
+            alt="Gradient glyph on light background"
+            width="96"
+            height="96"
+          />
+        </div>
+        <div class="tile dark">
+          <span class="tag">White glyph</span>
+          <img
+            src="./brand-mark-white.svg"
+            alt="White glyph on dark background"
+            width="96"
+            height="96"
+          />
+        </div>
+        <div class="tile">
+          <span class="tag">Black glyph</span>
+          <img
+            src="./brand-mark-black.svg"
+            alt="Black glyph on light background"
+            width="96"
+            height="96"
+          />
+        </div>
+        <div class="tile">
+          <span class="tag">Tile</span>
+          <img src="./brand-mark.svg" alt="Gradient tile mark" width="96" height="96" />
+        </div>
+      </div>
 
-  <h2>Size ramp</h2>
-  <div class="row">
-    <div class="size"><svg width="96" height="96" viewBox="0 0 64 64"><use href="#mark"/></svg><span>96 · marketing</span></div>
-    <div class="size"><svg width="64" height="64" viewBox="0 0 64 64"><use href="#mark"/></svg><span>64 · app icon</span></div>
-    <div class="size"><svg width="36" height="36" viewBox="0 0 64 64"><use href="#mark"/></svg><span>36 · navbar</span></div>
-    <div class="size"><svg width="16" height="16" viewBox="0 0 64 64"><use href="#mark"/></svg><span>16 · favicon</span></div>
-  </div>
+      <h2>Size ramp</h2>
+      <div class="row">
+        <div class="size">
+          <svg width="96" height="96" viewBox="0 0 64 64"><use href="#mark" /></svg
+          ><span>96 · marketing</span>
+        </div>
+        <div class="size">
+          <svg width="64" height="64" viewBox="0 0 64 64"><use href="#mark" /></svg
+          ><span>64 · app icon</span>
+        </div>
+        <div class="size">
+          <svg width="36" height="36" viewBox="0 0 64 64"><use href="#mark" /></svg
+          ><span>36 · navbar</span>
+        </div>
+        <div class="size">
+          <svg width="16" height="16" viewBox="0 0 64 64"><use href="#mark" /></svg
+          ><span>16 · favicon</span>
+        </div>
+      </div>
 
-  <h2>Navbar lockup</h2>
-  <div class="grid">
-    <div class="tile" style="min-height:120px">
-      <span class="lockup">
-        <svg width="36" height="36" viewBox="0 0 64 64"><use href="#mark"/></svg>
-        <span class="name"><strong>GaweQR</strong><small>Design and download instantly</small></span>
-      </span>
-    </div>
-    <div class="tile dark" style="min-height:120px">
-      <span class="lockup">
-        <svg width="36" height="36" viewBox="0 0 64 64"><use href="#mark"/></svg>
-        <span class="name"><strong>GaweQR</strong><small>Design and download instantly</small></span>
-      </span>
-    </div>
-  </div>
+      <h2>Navbar lockup</h2>
+      <div class="grid">
+        <div class="tile" style="min-height: 120px">
+          <span class="lockup">
+            <svg width="36" height="36" viewBox="0 0 64 64"><use href="#mark" /></svg>
+            <span class="name"
+              ><strong>GaweQR</strong><small>Design and download instantly</small></span
+            >
+          </span>
+        </div>
+        <div class="tile dark" style="min-height: 120px">
+          <span class="lockup">
+            <svg width="36" height="36" viewBox="0 0 64 64"><use href="#mark" /></svg>
+            <span class="name"
+              ><strong>GaweQR</strong><small>Design and download instantly</small></span
+            >
+          </span>
+        </div>
+      </div>
 
-  <h2>All files</h2>
-  <div class="table-scroll">
-    <table>
-      <thead><tr><th>File</th><th>Use</th></tr></thead>
-      <tbody>
-        <tr><td><a href="./brand-mark.svg" download>brand-mark.svg</a></td><td>Master mark — gradient tile</td></tr>
-        <tr><td><a href="./brand-mark-glyph-gradient.svg" download>brand-mark-glyph-gradient.svg</a></td><td>Gradient glyph, no tile — light backgrounds</td></tr>
-        <tr><td><a href="./brand-mark-white.svg" download>brand-mark-white.svg</a></td><td>White glyph — dark backgrounds</td></tr>
-        <tr><td><a href="./brand-mark-black.svg" download>brand-mark-black.svg</a></td><td>Black glyph — print / monochrome</td></tr>
-        <tr><td><a href="./logo-light.svg" download>logo-light.svg</a></td><td>Lockup with wordmark — light backgrounds</td></tr>
-        <tr><td><a href="./logo-dark.svg" download>logo-dark.svg</a></td><td>Lockup with wordmark — dark backgrounds</td></tr>
-        <tr><td><a href="./png/brand-mark-16.png" download>png/brand-mark-16.png</a></td><td>Favicon 16px</td></tr>
-        <tr><td><a href="./png/brand-mark-32.png" download>png/brand-mark-32.png</a></td><td>Favicon 32px</td></tr>
-        <tr><td><a href="./png/brand-mark-48.png" download>png/brand-mark-48.png</a></td><td>Windows tile / shortcut</td></tr>
-        <tr><td><a href="./png/brand-mark-64.png" download>png/brand-mark-64.png</a></td><td>General UI</td></tr>
-        <tr><td><a href="./png/brand-mark-128.png" download>png/brand-mark-128.png</a></td><td>Chrome Web Store / listings</td></tr>
-        <tr><td><a href="./png/apple-touch-icon.png" download>png/apple-touch-icon.png</a></td><td>iOS home screen (180px)</td></tr>
-        <tr><td><a href="./png/brand-mark-192.png" download>png/brand-mark-192.png</a></td><td>PWA manifest icon</td></tr>
-        <tr><td><a href="./png/brand-mark-256.png" download>png/brand-mark-256.png</a></td><td>Desktop app icon</td></tr>
-        <tr><td><a href="./png/brand-mark-512.png" download>png/brand-mark-512.png</a></td><td>PWA splash / marketing</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-</body>
+      <h2>All files</h2>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Use</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="./brand-mark.svg" download>brand-mark.svg</a></td>
+              <td>Master mark — gradient tile</td>
+            </tr>
+            <tr>
+              <td>
+                <a href="./brand-mark-glyph-gradient.svg" download>brand-mark-glyph-gradient.svg</a>
+              </td>
+              <td>Gradient glyph, no tile — light backgrounds</td>
+            </tr>
+            <tr>
+              <td><a href="./brand-mark-white.svg" download>brand-mark-white.svg</a></td>
+              <td>White glyph — dark backgrounds</td>
+            </tr>
+            <tr>
+              <td><a href="./brand-mark-black.svg" download>brand-mark-black.svg</a></td>
+              <td>Black glyph — print / monochrome</td>
+            </tr>
+            <tr>
+              <td><a href="./logo-light.svg" download>logo-light.svg</a></td>
+              <td>Lockup with wordmark — light backgrounds</td>
+            </tr>
+            <tr>
+              <td><a href="./logo-dark.svg" download>logo-dark.svg</a></td>
+              <td>Lockup with wordmark — dark backgrounds</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-16.png" download>png/brand-mark-16.png</a></td>
+              <td>Favicon 16px</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-32.png" download>png/brand-mark-32.png</a></td>
+              <td>Favicon 32px</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-48.png" download>png/brand-mark-48.png</a></td>
+              <td>Windows tile / shortcut</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-64.png" download>png/brand-mark-64.png</a></td>
+              <td>General UI</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-128.png" download>png/brand-mark-128.png</a></td>
+              <td>Chrome Web Store / listings</td>
+            </tr>
+            <tr>
+              <td><a href="./png/apple-touch-icon.png" download>png/apple-touch-icon.png</a></td>
+              <td>iOS home screen (180px)</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-192.png" download>png/brand-mark-192.png</a></td>
+              <td>PWA manifest icon</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-256.png" download>png/brand-mark-256.png</a></td>
+              <td>Desktop app icon</td>
+            </tr>
+            <tr>
+              <td><a href="./png/brand-mark-512.png" download>png/brand-mark-512.png</a></td>
+              <td>PWA splash / marketing</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
 </html>

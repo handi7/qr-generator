@@ -14,13 +14,13 @@ complete, portable QR definition, and no user data ever leaves the device.
 
 The Studio features below depend on the foundation work. Suggested sequence:
 
-| # | Work | Effort |
-| - | ---- | ------ |
-| 1 | Share as image + Copy link | S |
-| 2 | Payload codec registry + parser fixes | M |
-| 3 | Scan a QR code to prefill Studio | M |
-| 4 | Persist the uploaded logo | S |
-| 5 | Saved QR list | L |
+| #   | Work                                  | Effort |
+| --- | ------------------------------------- | ------ |
+| 1   | Share as image + Copy link            | S      |
+| 2   | Payload codec registry + parser fixes | M      |
+| 3   | Scan a QR code to prefill Studio      | M      |
+| 4   | Persist the uploaded logo             | S      |
+| 5   | Saved QR list                         | L      |
 
 Share ships first because it is self-contained and immediately visible. The
 codec registry lands next because it unblocks both scanning and the six new
@@ -32,16 +32,16 @@ logo fix in place.
 Not user-visible on their own, but every feature below depends on them.
 
 - [ ] **Payload codec registry** — move the per-template `parse*` / `format*`
-  helpers out of the form components into
-  `utils/payloads/{text,wifi,whatsapp,contact,email}.ts` behind one shared
-  interface:
+      helpers out of the form components into
+      `utils/payloads/{text,wifi,whatsapp,contact,email}.ts` behind one shared
+      interface:
 
   ```ts
   export interface PayloadCodec<T> {
     key: TemplateKey;
-    detect(text: string): boolean;              // "WIFI:", "BEGIN:VCARD", "mailto:", wa.me
-    parse(text: string): T | null;              // payload → form state
-    build(state: T): string;                    // form state → payload
+    detect(text: string): boolean; // "WIFI:", "BEGIN:VCARD", "mailto:", wa.me
+    parse(text: string): T | null; // payload → form state
+    build(state: T): string; // form state → payload
     toParams(state: T): Record<string, string>; // form state → query params
   }
   ```
@@ -53,11 +53,11 @@ Not user-visible on their own, but every feature below depends on them.
   scan-to-prefill one dispatch point and reduces each new template to one file.
 
 - [ ] **Persist the uploaded logo** — `store.ts` currently holds
-  `URL.createObjectURL(file)`. A blob URL dies on reload and never reaches the
-  query string, so a saved QR would silently lose its logo and a shared link
-  would render without it. Store the image as a `Blob` in IndexedDB (via
-  `idb-keyval`) keyed by id; avoid localStorage, where base64 logos quickly hit
-  the ~5MB quota.
+      `URL.createObjectURL(file)`. A blob URL dies on reload and never reaches the
+      query string, so a saved QR would silently lose its logo and a shared link
+      would render without it. Store the image as a `Blob` in IndexedDB (via
+      `idb-keyval`) keyed by id; avoid localStorage, where base64 logos quickly hit
+      the ~5MB quota.
 
 ### Known parser bugs to fix alongside the registry
 
@@ -79,7 +79,7 @@ These are harmless today but become user-facing the moment scanning ships.
 ## Studio Features
 
 - [ ] **Share as image (no download)** — share the rendered QR straight to
-  WhatsApp, Instagram or any share target using the Web Share API Level 2:
+      WhatsApp, Instagram or any share target using the Web Share API Level 2:
 
   ```ts
   const blob = await qr.getRawData("png");
@@ -103,12 +103,12 @@ These are harmless today but become user-facing the moment scanning ships.
 
 - [ ] **Copy link** — a second, separate action next to Share. Because the URL
       already encodes the full configuration, the recipient can open and keep
-      editing the design. Note in the UI that the uploaded logo is *not*
+      editing the design. Note in the UI that the uploaded logo is _not_
       included in the link (it cannot be encoded in a URL). A future `img_url`
       param could carry a remote logo.
 
 - [ ] **Scan a QR code to prefill Studio** — decode an existing QR and load it
-  into Studio for restyling, then save it.
+      into Studio for restyling, then save it.
 
   - Ship **file upload, clipboard paste and drag-and-drop first**; camera
     capture second. File decoding is ~30 lines (image → canvas →
@@ -129,16 +129,16 @@ These are harmless today but become user-facing the moment scanning ships.
     `components/link-or-text.tsx`.
 
 - [ ] **Saved QR list** (`/my-qr`) — create, save, rename and delete QR codes,
-  stored on-device. Since the URL is the state, the record is small:
+      stored on-device. Since the URL is the state, the record is small:
 
   ```ts
   interface SavedQr {
-    id: string;          // crypto.randomUUID()
+    id: string; // crypto.randomUUID()
     name: string;
     template: TemplateKey;
-    params: string;      // URLSearchParams.toString() — the whole Studio state
-    logoKey?: string;    // IndexedDB key
-    thumbnail?: string;  // small PNG data URL (~120px)
+    params: string; // URLSearchParams.toString() — the whole Studio state
+    logoKey?: string; // IndexedDB key
+    thumbnail?: string; // small PNG data URL (~120px)
     createdAt: number;
     updatedAt: number;
   }

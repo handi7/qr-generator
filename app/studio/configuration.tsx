@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   Autocomplete,
   AutocompleteItem,
@@ -10,15 +11,16 @@ import {
   RadioGroup,
   Slider,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { templateOptions } from "@/constants/template.data";
-import WifiTemplate from "@/components/wifi-template";
-import WhatsappTemplate from "@/components/whatsapp-template";
+
+import InputNumber from "@/components/Shared/InputNumber";
 import ContactTemplate from "@/components/contact-template";
 import EmailTemplate from "@/components/email-template";
+import WhatsappTemplate from "@/components/whatsapp-template";
+import WifiTemplate from "@/components/wifi-template";
+import { templateOptions } from "@/constants/template.data";
 import useQueryParams from "@/hokks/useQueryParams";
-import InputNumber from "@/components/Shared/InputNumber";
 import { TemplateType } from "@/types/template.type";
 import { normalizeTemplateType } from "@/utils/template.utils";
 

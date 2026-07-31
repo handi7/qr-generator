@@ -1,11 +1,13 @@
 "use client";
 
-import { ButtonProps, Input } from "@heroui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
+import { ButtonProps, Input } from "@heroui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import Icon from "./Shared/Icon";
+
 import Button from "./Shared/Button";
+import Icon from "./Shared/Icon";
 
 interface ContactState {
   fullName?: string;
@@ -90,6 +92,7 @@ function ContactTemplate() {
   ) => {
     setData((prev) => {
       const newVal = { ...prev, [key]: value };
+
       debounce(newVal);
 
       return newVal;
@@ -99,8 +102,10 @@ function ContactTemplate() {
   const onListChange = (key: "phones" | "emails" | "websites", index: number, value: string) => {
     setData((prev) => {
       const nextList = [...prev[key]];
+
       nextList[index] = value;
       const newVal = { ...prev, [key]: nextList };
+
       debounce(newVal);
 
       return newVal;
@@ -110,6 +115,7 @@ function ContactTemplate() {
   const addListField = (key: "phones" | "emails" | "websites") => {
     setData((prev) => {
       const newVal = { ...prev, [key]: [...prev[key], ""] };
+
       debounce(newVal);
 
       return newVal;
@@ -122,6 +128,7 @@ function ContactTemplate() {
 
       const nextList = prev[key].filter((_, i) => i !== index);
       const newVal = { ...prev, [key]: nextList.length ? nextList : [""] };
+
       debounce(newVal);
 
       return newVal;
@@ -130,11 +137,13 @@ function ContactTemplate() {
 
   const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     onFieldChange(name as "fullName" | "company" | "jobTitle" | "department" | "address", value);
   };
 
   useEffect(() => {
     const parsed = parseContactQuery(searchParams) || parseContactVCard(text);
+
     if (parsed) setData(parsed);
   }, []);
 
@@ -179,8 +188,10 @@ function ContactTemplate() {
         onChange={onInputChange}
       />
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Phone Numbers</label>
+      <div role="group" aria-labelledby="contact-phones-label" className="flex flex-col gap-2">
+        <span id="contact-phones-label" className="text-sm">
+          Phone Numbers
+        </span>
         {data.phones.map((phone, index) => (
           <div key={`phone-${index}`} className="flex items-center gap-2">
             <Input
@@ -203,8 +214,10 @@ function ContactTemplate() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Emails</label>
+      <div role="group" aria-labelledby="contact-emails-label" className="flex flex-col gap-2">
+        <span id="contact-emails-label" className="text-sm">
+          Emails
+        </span>
         {data.emails.map((email, index) => (
           <div key={`email-${index}`} className="flex items-center gap-2">
             <Input
@@ -228,8 +241,10 @@ function ContactTemplate() {
         </Button>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Websites</label>
+      <div role="group" aria-labelledby="contact-websites-label" className="flex flex-col gap-2">
+        <span id="contact-websites-label" className="text-sm">
+          Websites
+        </span>
         {data.websites.map((website, index) => (
           <div key={`website-${index}`} className="flex items-center gap-2">
             <Input
@@ -356,6 +371,7 @@ function parseContactVCard(qrString: string): ContactState | null {
 
     if (line.startsWith("ORG:")) {
       const orgParts = line.slice(4).split(/(?<!\\);/);
+
       state.company = unescapeVCardValue(orgParts[0] || "");
       state.department = unescapeVCardValue(orgParts[1] || "");
       continue;
@@ -367,18 +383,21 @@ function parseContactVCard(qrString: string): ContactState | null {
     }
 
     const telMatch = line.match(/^TEL(?:;[^:]*)?:(.*)$/);
+
     if (telMatch) {
       state.phones.push(unescapeVCardValue(telMatch[1]));
       continue;
     }
 
     const emailMatch = line.match(/^EMAIL(?:;[^:]*)?:(.*)$/);
+
     if (emailMatch) {
       state.emails.push(unescapeVCardValue(emailMatch[1]));
       continue;
     }
 
     const urlMatch = line.match(/^URL(?:;[^:]*)?:(.*)$/);
+
     if (urlMatch) {
       state.websites.push(unescapeVCardValue(urlMatch[1]));
       continue;
@@ -386,6 +405,7 @@ function parseContactVCard(qrString: string): ContactState | null {
 
     if (line.startsWith("ADR:")) {
       const adrParts = line.slice(4).split(/(?<!\\);/);
+
       state.address = unescapeVCardValue(adrParts[2] || "");
     }
   }
@@ -417,6 +437,7 @@ function toStructuredName(fullName: string): { firstName: string; lastName: stri
 
 function formatContactVCard(data: ContactState): string {
   const fullName = data.fullName?.trim() || "";
+
   if (!fullName) return "";
 
   const company = data.company?.trim();
@@ -430,6 +451,7 @@ function formatContactVCard(data: ContactState): string {
   const lines = ["BEGIN:VCARD", "VERSION:3.0", `FN:${escapeVCardValue(fullName)}`];
 
   const structuredName = toStructuredName(fullName);
+
   if (structuredName) {
     lines.push(
       `N:${escapeVCardValue(structuredName.lastName)};${escapeVCardValue(structuredName.firstName)};;;`,

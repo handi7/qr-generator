@@ -1,5 +1,13 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
+
+import { Accordion, AccordionItem, Button, Image, Radio, RadioGroup, Slider } from "@heroui/react";
+import { CornerDotType, CornerSquareType, DotType } from "qr-code-styling";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { HexAlphaColorPicker } from "react-colorful";
+import { useDebouncedCallback } from "use-debounce";
+
 import {
   mainBg,
   mainCornersDot,
@@ -9,12 +17,6 @@ import {
 } from "@/constants/default.data";
 import { useImageStore } from "@/store";
 import { OptionsForm } from "@/types/form.type";
-import { Accordion, AccordionItem, Button, Image, Radio, RadioGroup, Slider } from "@heroui/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { CornerDotType, CornerSquareType, DotType } from "qr-code-styling";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { HexAlphaColorPicker } from "react-colorful";
-import { useDebouncedCallback } from "use-debounce";
 
 function OptionsSection() {
   const router = useRouter();
@@ -58,6 +60,7 @@ function OptionsSection() {
   const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) {
       const image = URL.createObjectURL(e.target.files[0]);
+
       store.setImage(image);
     }
   };
@@ -130,8 +133,14 @@ function OptionsSection() {
                   />
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="bg-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="bg-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.bg_color}
                     onChange={(value) => onChange("bg_color", value, { debounce: true })}
@@ -158,8 +167,14 @@ function OptionsSection() {
                   </RadioGroup>
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="dot-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="dot-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.dot_color}
                     onChange={(value) => onChange("dot_color", value, { debounce: true })}
@@ -186,8 +201,14 @@ function OptionsSection() {
                   </RadioGroup>
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="corner-dot-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="corner-dot-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.corner_dot_color}
                     onChange={(value) => onChange("corner_dot_color", value, { debounce: true })}
@@ -215,8 +236,14 @@ function OptionsSection() {
                   </RadioGroup>
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="corner-square-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="corner-square-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.corner_square_color}
                     onChange={(value) => onChange("corner_square_color", value, { debounce: true })}

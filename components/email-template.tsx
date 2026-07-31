@@ -1,9 +1,10 @@
 "use client";
 
-import useDebouncedCallback from "@/hokks/useDebounceCallback";
-import useQueryParams from "@/hokks/useQueryParams";
 import { Input, Textarea } from "@heroui/react";
 import React, { useEffect } from "react";
+
+import useDebouncedCallback from "@/hokks/useDebounceCallback";
+import useQueryParams from "@/hokks/useQueryParams";
 
 interface EmailData {
   to: string;
@@ -106,6 +107,7 @@ function normalizeRecipients(value: string) {
 
 function generateEmailQR(data: EmailData): string {
   const to = normalizeRecipients(data.to);
+
   if (!to) return "";
 
   const cc = normalizeRecipients(data.cc);

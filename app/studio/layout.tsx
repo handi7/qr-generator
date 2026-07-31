@@ -1,5 +1,6 @@
 import { Divider } from "@heroui/react";
 import React, { PropsWithChildren, Suspense } from "react";
+
 import ConfigurationSection from "./configuration";
 import OptionsSection from "./options";
 

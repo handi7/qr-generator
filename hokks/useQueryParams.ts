@@ -45,6 +45,7 @@ function useQueryParams() {
   const reset = (newObj?: QueryObject) => {
     if (newObj) {
       const params = new URLSearchParams();
+
       Object.entries(newObj).forEach(([key, value]) => {
         if (value === null || value === undefined || value === "") {
           params.delete(key);

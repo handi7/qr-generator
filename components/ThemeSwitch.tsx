@@ -1,8 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import React, { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import React, { useEffect, useState } from "react";
+
 import Icon from "./Shared/Icon";
 
 function ThemeSwitch() {

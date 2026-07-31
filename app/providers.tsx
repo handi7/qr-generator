@@ -4,8 +4,9 @@ import { HeroUIProvider } from "@heroui/system";
 import { MotionConfig } from "framer-motion";
 import { ThemeProvider } from "next-themes";
 import React, { PropsWithChildren } from "react";
-import Navbar from "@/components/Navbar";
+
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 function Providers({ children }: PropsWithChildren) {
   return (

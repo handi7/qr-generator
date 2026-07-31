@@ -1,11 +1,13 @@
 "use client";
 
-import HeroQr from "@/components/hero-qr";
-import Icon from "@/components/Shared/Icon";
-import { templates } from "@/constants/template.data";
-import { motion, type Variants } from "framer-motion";
-import { ArrowRight, FileDown, Link2, Sparkles, UserRoundCheck } from "lucide-react";
 import Link from "next/link";
+
+import { type Variants, motion } from "framer-motion";
+import { ArrowRight, FileDown, Link2, Sparkles, UserRoundCheck } from "lucide-react";
+
+import Icon from "@/components/Shared/Icon";
+import HeroQr from "@/components/hero-qr";
+import { templates } from "@/constants/template.data";
 
 const container = {
   hidden: { opacity: 0 },
@@ -58,9 +60,9 @@ export default function HomePageClient() {
           </motion.h1>
 
           <motion.p variants={item} className="max-w-xl text-sm text-foreground/75 sm:text-base">
-            GaweQR gives you a beautiful workflow to generate links, WiFi access, WhatsApp
-            messages, and contact cards. Every style setting stays in the URL, so your designs are
-            easy to reuse and share.
+            GaweQR gives you a beautiful workflow to generate links, WiFi access, WhatsApp messages,
+            and contact cards. Every style setting stays in the URL, so your designs are easy to
+            reuse and share.
           </motion.p>
 
           <motion.div variants={item} className="flex flex-wrap items-center gap-3">

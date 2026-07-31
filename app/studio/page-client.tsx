@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { CornerDotType, CornerSquareType, DotType, Options, ShapeType } from "qr-code-styling";
+import { useCallback, useEffect, useState } from "react";
+
+import QrCode from "@/app/studio/qr";
 import {
   main,
   mainBg,
@@ -10,10 +12,9 @@ import {
   mainDots,
   mainImage,
 } from "@/constants/default.data";
-import { useImageStore } from "@/store";
 import useQueryParams from "@/hokks/useQueryParams";
+import { useImageStore } from "@/store";
 import { normalizeTemplateType } from "@/utils/template.utils";
-import QrCode from "@/app/studio/qr";
 
 export default function QRStudio() {
   const query = useQueryParams();
@@ -61,6 +62,7 @@ export default function QRStudio() {
         cornersSquareOptions: { type: cSquareType as CornerSquareType, color: cSquareColor },
         imageOptions: { margin: imgMargin, imageSize },
       };
+
       return tempOptions;
     },
     [
