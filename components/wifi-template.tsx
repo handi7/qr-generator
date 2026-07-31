@@ -1,58 +1,16 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
 import { Input, Select, SelectItem } from "@heroui/react";
 import { Eye, EyeClosed } from "lucide-react";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
+import { useState } from "react";
 
-interface DataState {
-  type?: string;
-  ssid?: string;
-  password?: string;
-}
+import usePayloadForm from "@/hokks/usePayloadForm";
+import wifiCodec from "@/utils/payloads/wifi";
 
 function WifiTemplate() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = new URLSearchParams(useSearchParams());
+  const { data, patch } = usePayloadForm(wifiCodec);
 
-  const text = searchParams.get("text") || "";
-
-  const [data, setData] = useState<DataState>({});
   const [showPassword, setShowPassword] = useState(false);
-
-  const setQuery = (key: string, value: string) => {
-    if (value) searchParams.set(key, value);
-    else searchParams.delete(key);
-    router.replace(`${pathname}?${searchParams.toString()}`);
-  };
-
-  const debounce = useDebouncedCallback(setQuery, 500);
-
-  const onChange = (key: string, value: string) => {
-    setData((prev) => {
-      const newVal = { ...prev, [key]: value };
-      const formatted = formatWifiQR(newVal);
-
-      debounce("text", formatted);
-
-      return newVal;
-    });
-  };
-
-  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    onChange(name, value);
-  };
-
-  useEffect(() => {
-    const parsed = parseWifiQR(text);
-
-    if (parsed) setData(parsed);
-  }, []);
 
   return (
     <div className="flex flex-col gap-3">
@@ -61,9 +19,8 @@ function WifiTemplate() {
         className="max-w-xs"
         label="Security"
         placeholder="Security"
-        defaultSelectedKeys={["WPA"]}
-        selectedKeys={[data.type ?? "WPA"]}
-        onSelectionChange={(keys) => onChange("type", keys.currentKey || "")}
+        selectedKeys={[data.type]}
+        onSelectionChange={(keys) => patch({ type: keys.currentKey ?? "" })}
       >
         <SelectItem key="WPA">WPA</SelectItem>
         <SelectItem key="WEP">WEP</SelectItem>
@@ -76,7 +33,7 @@ function WifiTemplate() {
         name="ssid"
         placeholder="SSID"
         value={data.ssid}
-        onChange={onInputChange}
+        onChange={(e) => patch({ ssid: e.target.value })}
       />
 
       <Input
@@ -93,30 +50,10 @@ function WifiTemplate() {
           )
         }
         value={data.password}
-        onChange={onInputChange}
+        onChange={(e) => patch({ password: e.target.value })}
       />
     </div>
   );
-}
-
-function parseWifiQR(qrString: string) {
-  const match = qrString.match(/^WIFI:T:(.*?);S:(.*?);P:(.*?);;?$/);
-
-  if (!match) return null;
-
-  const [, type, ssid, password] = match;
-
-  return {
-    type,
-    ssid,
-    password,
-  };
-}
-
-function formatWifiQR(data: DataState): string {
-  const { type = "", ssid = "", password = "" } = data;
-
-  return `WIFI:T:${type};S:${ssid};P:${password};;`;
 }
 
 export default WifiTemplate;

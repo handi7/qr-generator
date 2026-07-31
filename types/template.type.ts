@@ -7,7 +7,6 @@ export type TemplateKey = "text" | "wifi" | "whatsapp" | "contact" | "email";
 export interface TemplateOption {
   label: string;
   key: TemplateKey;
-  default?: string;
 }
 
 export interface Template {

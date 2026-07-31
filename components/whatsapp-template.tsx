@@ -1,55 +1,13 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
 import { Input, Textarea } from "@heroui/react";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
+import React from "react";
 
-interface WhatsappState {
-  phone?: string;
-  message?: string;
-}
+import usePayloadForm from "@/hokks/usePayloadForm";
+import whatsappCodec from "@/utils/payloads/whatsapp";
 
 function WhatsappTemplate() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = new URLSearchParams(useSearchParams());
-
-  const text = searchParams.get("text") || "";
-
-  const [data, setData] = useState<WhatsappState>({});
-
-  const setQuery = (key: string, value: string) => {
-    if (value) searchParams.set(key, value);
-    else searchParams.delete(key);
-    router.replace(`${pathname}?${searchParams.toString()}`);
-  };
-
-  const debounce = useDebouncedCallback(setQuery, 500);
-
-  const onChange = (key: string, value: string) => {
-    setData((prev) => {
-      const newVal = { ...prev, [key]: value };
-      const formatted = formatWhatsappQR(newVal);
-
-      debounce("text", formatted);
-
-      return newVal;
-    });
-  };
-
-  const onInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-
-    onChange(name, value);
-  };
-
-  useEffect(() => {
-    const parsed = parseWhatsappQR(text);
-
-    if (parsed) setData(parsed);
-  }, []);
+  const { data, patch } = usePayloadForm(whatsappCodec);
 
   return (
     <div className="flex flex-col gap-3 max-w-md">
@@ -58,7 +16,7 @@ function WhatsappTemplate() {
         name="phone"
         placeholder="6281234567890"
         value={data.phone}
-        onChange={onInputChange}
+        onChange={(e) => patch({ phone: e.target.value })}
       />
 
       <Textarea
@@ -66,34 +24,10 @@ function WhatsappTemplate() {
         name="message"
         placeholder="Hello! 👋"
         value={data.message}
-        onChange={onInputChange}
+        onChange={(e) => patch({ message: e.target.value })}
       />
     </div>
   );
-}
-
-function parseWhatsappQR(qrString: string): WhatsappState | null {
-  try {
-    const url = new URL(qrString);
-
-    if (!url.hostname.includes("wa.me")) return null;
-
-    const phone = url.pathname.replace("/", "");
-    const message = url.searchParams.get("text") || "";
-
-    return { phone, message };
-  } catch {
-    return null;
-  }
-}
-
-function formatWhatsappQR(data: WhatsappState): string {
-  const { phone = "", message = "" } = data;
-
-  const baseUrl = `https://wa.me/${phone}`;
-  const encodedMessage = encodeURIComponent(message);
-
-  return message ? `${baseUrl}?text=${encodedMessage}` : baseUrl;
 }
 
 export default WhatsappTemplate;

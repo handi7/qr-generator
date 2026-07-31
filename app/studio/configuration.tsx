@@ -22,6 +22,7 @@ import WifiTemplate from "@/components/wifi-template";
 import { templateOptions } from "@/constants/template.data";
 import useQueryParams from "@/hokks/useQueryParams";
 import { TemplateType } from "@/types/template.type";
+import { codecs } from "@/utils/payloads";
 import { normalizeTemplateType } from "@/utils/template.utils";
 
 interface DataState {
@@ -119,13 +120,12 @@ function ConfigurationSection() {
             label="Select Template"
             placeholder="Search template"
             onSelectionChange={(key) => {
-              const selected = templateOptions.find((item) => item.key === key?.toString());
               const nextType = normalizeTemplateType(key?.toString());
-              const nextText =
-                nextType === "email" ? "" : selected?.default || "https://gaweqr.my.id/";
 
+              // reset() drops every param, so the outgoing template can't leave
+              // its own fields behind in the URL.
               query.reset({
-                text: nextText,
+                text: codecs[nextType].defaultText,
                 template: nextType,
               });
             }}
