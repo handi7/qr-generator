@@ -16,13 +16,13 @@ complete, portable QR definition, and no user data ever leaves the device.
 | --- | ------------------------------------- | ------ | ------- |
 | 1   | Share as image + Copy link            | S      | shipped |
 | 2   | Payload codec registry + parser fixes | M      | shipped |
-| 3   | Scan a QR code to prefill Studio      | M      | next    |
-| 4   | Persist the uploaded logo             | S      |         |
-| 5   | Saved QR list                         | L      |         |
+| 3   | Scan a QR code to prefill Studio      | M      | shipped |
+| 4   | Persist the uploaded logo             | S      | shipped |
+| 5   | Saved QR list                         | L      | next    |
 
-Scanning is next because the codecs it needs are already in place — only the
-decoder and its UI are missing. The saved list stays last: it needs the storage
-layer, and the logo fix has to land first or saved codes would lose their logo.
+Everything the saved list depends on is now in place: the URL already describes
+a QR completely, and logos survive a reload in IndexedDB, so a saved code can
+reference one instead of losing it.
 
 ## Architecture in place
 
@@ -75,45 +75,58 @@ invalidating the cache. Capability is probed after mount with a throwaway
 `File` — Web Share only reports file support for a concrete file, and reading
 `navigator` during render would desync hydration.
 
+### Scanning — `utils/scan.utils.ts`, `components/scan-qr-dialog.tsx`
+
+Four inputs: camera, file picker, drag-and-drop, clipboard paste. Two decoders:
+the native `BarcodeDetector` where it exists, a **lazily imported** jsQR
+everywhere else. Keep that import dynamic — jsQR is ~130KB and most visitors
+never scan. `paramsForPayload()` turns a decoded payload into Studio params.
+
+- **A scan keeps the style and replaces only the content.** `paramsForPayload`
+  clears the content params of _every_ codec, not just the active one, so
+  switching contact → wifi can't leave `full_name` stranded. Size, colours and
+  margin are preserved on purpose: people scan a QR in order to restyle it.
+- **`text` is stored exactly as scanned**, never rebuilt, so nothing the
+  original payload encoded is quietly normalised away.
+- **A decoded payload is untrusted input.** The dialog renders it as monospace
+  text and never as a link, so nothing is one stray click from opening. In
+  Studio, `components/link-or-text.tsx` makes only `http(s)` clickable — that
+  regex is what keeps `javascript:` and `data:` inert — with
+  `rel="noopener noreferrer"`.
+- **The camera stream must be released on every exit path**: successful scan,
+  Stop, closing the dialog, Escape, unmount. Cleanup is guarded by a local
+  `cancelled` flag and re-checked _after_ `startCamera()` resolves, because the
+  effect can be torn down while that await is still in flight — which is exactly
+  what React StrictMode does in development. Get this wrong and the camera
+  indicator stays lit.
+- The camera loop reuses one canvas; one-off image decodes each get their own,
+  so a paste arriving mid-scan can't overwrite pixels the other decode is about
+  to read.
+
+### Logo persistence — `utils/logo.utils.ts`, `store.ts`
+
+The logo is a `Blob` in IndexedDB under a named store (`gaweqr` / `logos`), and
+the app renders it through an object URL.
+
+- **Use `del`, never `clear`.** `clear()` empties the whole store; the saved-QR
+  list will live in the same database.
+- **Revoke the previous object URL** whenever the logo is replaced or removed,
+  or every logo swap leaks a blob for the lifetime of the document.
+- **Every IndexedDB call is wrapped.** It is unavailable in some private-browsing
+  modes and can be switched off entirely; `setImage` returns whether the write
+  landed so the UI can say "added, but not saved" instead of lying.
+- `restoreImage` claims its guard flag _before_ awaiting, so StrictMode's double
+  effect can't mint two object URLs for the same blob.
+- `createStore()` is safe at module scope: idb-keyval opens the database lazily
+  on first access, so importing this from a client component doesn't break SSR.
+
 ### Not covered by a codec
 
 The free-text form stays inline in `app/studio/configuration.tsx`: it is a
 single field bound directly to `text`, so the hook would add nothing.
 `textCodec` still supplies its `defaultText` and its place in detection.
 
-## Foundation
-
-- [ ] **Persist the uploaded logo** — `store.ts` currently holds
-      `URL.createObjectURL(file)`. A blob URL dies on reload and never reaches
-      the query string, so a saved QR would silently lose its logo and a shared
-      link would render without it. Store the image as a `Blob` in IndexedDB
-      (via `idb-keyval`) keyed by id; avoid localStorage, where base64 logos
-      quickly hit the ~5MB quota.
-
 ## Studio Features
-
-- [ ] **Scan a QR code to prefill Studio** — decode an existing QR and load it
-      into Studio for restyling. The codec side is done; what's left is the
-      decoder and the UI.
-
-  - Ship **file upload, clipboard paste and drag-and-drop first**; camera
-    capture second. File decoding is ~30 lines (image → canvas →
-    `getImageData` → decode), works in every browser, needs no permission, and
-    covers the most common case: restyling a QR you already have a screenshot
-    or photo of. Camera needs HTTPS, a permission prompt, `playsInline` +
-    `muted` for iOS, and careful track cleanup on unmount.
-  - Use the native `BarcodeDetector` when available, with a lazily imported
-    `jsqr` fallback for Safari and Firefox. The decoder must sit behind a
-    dynamic import — most visitors never scan, so it should stay out of the
-    main Studio bundle.
-  - Feed the decoded string to `detectCodec()`, then write
-    `?template=<codec.key>` plus `text` (and the codec's own params, if it has
-    them) — `usePayloadForm` picks it up from there. Unrecognized payloads land
-    on free text by design, not as an error.
-  - Treat decoded content as untrusted: render it as text first and never
-    auto-navigate, so the user sees what they scanned before clicking. Keep
-    `rel="noopener noreferrer"` on the rendered link in
-    `components/link-or-text.tsx`.
 
 - [ ] **Saved QR list** (`/my-qr`) — create, save, rename and delete QR codes,
       stored on-device. Since the URL is the state, the record is small:
@@ -138,9 +151,10 @@ single field bound directly to `text`, so the hook would add nothing.
     from a throwaway instance
     (`new QRCodeStyling({ ...options, width: 120, height: 120 })` →
     `getRawData("png")`) and render a plain `<img>` in the list.
-  - Persist with Zustand's `persist` middleware pointed at an
-    `idb-keyval`-backed custom storage, so metadata and logo blobs share one
-    store.
+  - Persist into the database `utils/logo.utils.ts` already opens (`gaweqr`),
+    in its own object store. Saving a QR that has a logo means copying the
+    current `studio:logo` blob to a per-record key, so replacing the Studio logo
+    later doesn't silently change every saved code that used it.
   - **Export / import JSON is part of this feature, not a follow-up.** Without
     accounts, clearing browser data wipes everything. Export also reinforces
     the product's position: the data never leaves the device.
@@ -204,20 +218,20 @@ Architectural decisions, recorded so they don't get relitigated.
   covers most of the need.
 - **Short links** (`gaweqr.my.id/q/abc`) — needs a backend and permanent
   storage, and creates dead QR codes if the service ever stops.
-- **Camera-first scanning** — more effort and narrower reach than file upload
-  and paste. Kept as the second step of the scan feature, not the entry point.
 - **Logos in shared links** — an image can't be encoded in a URL. Studio says
   so explicitly when a logo is set. A remote-logo `img_url` param could carry
   one later, at the cost of depending on someone else's hosting.
 
 ## Other Ideas
 
-- [ ] **Tests for the codecs.** They are pure functions with a lot of edge
-      cases (escaping, field order, round-trips) and are the foundation the
-      scan feature sits on; a throwaway script written during the refactor
-      already caught a real parsing bug. Needs a decision on the runner —
-      `tsx` plus a plain assertion script is the smallest thing that works and
-      matches the project's zero-test-infra starting point.
+- [ ] **Tests for the pure logic.** The codecs, `paramsForPayload` and
+      `logo.utils` are all pure or easily faked, and cover a lot of edge cases
+      (escaping, field order, round-trips, store isolation). Throwaway scripts
+      written while building them caught two real bugs — a WhatsApp URL parsed
+      to the phone number `"send"`, and `clearLogo` wiping a whole IndexedDB
+      store. Needs a decision on the runner: `tsx` plus plain assertion scripts
+      is the smallest thing that works, with `fake-indexeddb` for the storage
+      layer.
 - [ ] Logo upload presets in Studio (common social icons as embedded logos).
 - [ ] Shareable template gallery — curated style presets encoded as Studio
       URLs, since every style setting already lives in the URL.
