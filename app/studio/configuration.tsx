@@ -17,6 +17,7 @@ import { useDebouncedCallback } from "use-debounce";
 import InputNumber from "@/components/Shared/InputNumber";
 import ContactTemplate from "@/components/contact-template";
 import EmailTemplate from "@/components/email-template";
+import ScanQrDialog from "@/components/scan-qr-dialog";
 import WhatsappTemplate from "@/components/whatsapp-template";
 import WifiTemplate from "@/components/wifi-template";
 import { templateOptions } from "@/constants/template.data";
@@ -132,6 +133,8 @@ function ConfigurationSection() {
           >
             {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
           </Autocomplete>
+
+          <ScanQrDialog />
 
           <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
             {renderTemplate(currentType)}
