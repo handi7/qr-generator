@@ -80,3 +80,24 @@ export async function deleteSavedQr(id: string): Promise<void> {
 
   await deleteLogoAt(logoKeyFor(id));
 }
+
+/**
+ * Deletes every record, one at a time rather than `clear()`, so each record's
+ * logo copy goes with it instead of being orphaned in the logo store.
+ */
+export async function deleteAllSavedQrs(): Promise<void> {
+  const records = await listSavedQrs();
+
+  for (const record of records) {
+    await deleteSavedQr(record.id);
+  }
+}
+
+/** Renaming is just a write; kept separate so callers don't rebuild the record. */
+export async function renameSavedQr(id: string, name: string): Promise<boolean> {
+  const record = await readSavedQr(id);
+
+  if (!record) return false;
+
+  return writeSavedQr({ ...record, name: name.trim() || "Untitled QR", updatedAt: Date.now() });
+}

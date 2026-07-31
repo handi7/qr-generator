@@ -8,6 +8,7 @@ import QRCodeStyling, { Options } from "qr-code-styling";
 import React, { useState } from "react";
 
 import { useImageStore } from "@/store";
+import { blobToDataUrl } from "@/utils/blob.utils";
 import { copyStudioLogoTo, deleteLogoAt, logoKeyFor } from "@/utils/logo.utils";
 import { SavedQr, newId, readSavedQr, writeSavedQr } from "@/utils/saved-qr.utils";
 import { normalizeTemplateType } from "@/utils/template.utils";
@@ -19,16 +20,6 @@ interface Props {
 }
 
 const THUMBNAIL_SIZE = 120;
-
-function blobToDataUrl(blob: Blob): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = () => resolve(String(reader.result));
-    reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(blob);
-  });
-}
 
 /**
  * Rendered off a throwaway instance rather than the one on screen: the list
