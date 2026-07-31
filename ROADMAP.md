@@ -12,103 +12,89 @@ complete, portable QR definition, and no user data ever leaves the device.
 
 ## Delivery order
 
-The Studio features below depend on the foundation work. Suggested sequence:
+| #   | Work                                  | Effort | Status  |
+| --- | ------------------------------------- | ------ | ------- |
+| 1   | Share as image + Copy link            | S      | shipped |
+| 2   | Payload codec registry + parser fixes | M      | shipped |
+| 3   | Scan a QR code to prefill Studio      | M      | next    |
+| 4   | Persist the uploaded logo             | S      |         |
+| 5   | Saved QR list                         | L      |         |
 
-| #   | Work                                  | Effort |
-| --- | ------------------------------------- | ------ |
-| 1   | Share as image + Copy link            | S      |
-| 2   | Payload codec registry + parser fixes | M      |
-| 3   | Scan a QR code to prefill Studio      | M      |
-| 4   | Persist the uploaded logo             | S      |
-| 5   | Saved QR list                         | L      |
+Scanning is next because the codecs it needs are already in place — only the
+decoder and its UI are missing. The saved list stays last: it needs the storage
+layer, and the logo fix has to land first or saved codes would lose their logo.
 
-Share ships first because it is self-contained and immediately visible. The
-codec registry lands next because it unblocks both scanning and the six new
-templates. The saved list comes last since it needs the storage layer and the
-logo fix in place.
+## Architecture in place
+
+What the shipped work established, and the invariants that keep it working.
+
+### Payload codecs — `utils/payloads/`
+
+One file per format, each implementing `PayloadCodec<TState>` from
+`types/payload.type.ts`: `detect` / `parse` / `build`, plus optional
+`toParams` / `fromParams`. `detectCodec(text)` in `utils/payloads/index.ts`
+routes any payload to the template that owns it.
+
+- **`detect()` must not claim payloads another codec owns.** `whatsapp` matches
+  only known WhatsApp hosts, which is precisely what lets every other URL fall
+  through to `text`. `text` is the catch-all and is consulted last.
+- **The `WIFI:` parser must stay field-order independent and escape-aware.**
+  Other generators emit `S:` before `T:`, and `\;` `\:` `\,` `\\` `\"` are
+  legal inside an SSID or password. It is a hand-rolled tokenizer, not a regex,
+  for exactly this reason.
+- **The `WIFI:` build output is frozen** at `WIFI:T:…;S:…;P:…;;`, with an empty
+  `T:` for an open network rather than the spec's `nopass`. Changing it would
+  make QR codes generated from links already in the wild decode differently.
+  Parsing accepts `nopass` as well.
+- **`toParams` / `fromParams` exist only for `contact` and `email`.** Their
+  `build()` returns an empty string until there is a full name / recipient, so
+  without mirrored params a half-filled form would lose its content on reload.
+  `wifi`, `whatsapp` and `text` always build a non-empty payload, so `text`
+  alone preserves them — and their URLs stay short. Do not add mirrored params
+  to a codec that does not need them.
+
+### Form ↔ URL binding — `hokks/usePayloadForm.ts`
+
+Every template form except free text uses this hook; new ones should too.
+
+The form owns its state while the user types and writes to the URL on a
+debounce. It reads back **only** when `text` changes for a reason that isn't its
+own write — a pasted link, the back button, or a scanned payload. That guard
+(`writtenRef`) is what makes a payload arriving after mount reach the fields,
+and it is initialised to the current `text` rather than `null`: otherwise an
+unrelated param change (moving a colour slider) mid-typing would pull stale
+state back over what the user is entering.
+
+### Share — `hokks/useShareQr.ts`
+
+The PNG is regenerated eagerly on every QR change, not inside the click
+handler, because Safari treats a long `await` between the click and
+`navigator.share()` as a loss of user activation. The `File` is built at click
+time from the cached blob so the filename field stays live without
+invalidating the cache. Capability is probed after mount with a throwaway
+`File` — Web Share only reports file support for a concrete file, and reading
+`navigator` during render would desync hydration.
+
+### Not covered by a codec
+
+The free-text form stays inline in `app/studio/configuration.tsx`: it is a
+single field bound directly to `text`, so the hook would add nothing.
+`textCodec` still supplies its `defaultText` and its place in detection.
 
 ## Foundation
 
-Not user-visible on their own, but every feature below depends on them.
-
-- [ ] **Payload codec registry** — move the per-template `parse*` / `format*`
-      helpers out of the form components into
-      `utils/payloads/{text,wifi,whatsapp,contact,email}.ts` behind one shared
-      interface:
-
-  ```ts
-  export interface PayloadCodec<T> {
-    key: TemplateKey;
-    detect(text: string): boolean; // "WIFI:", "BEGIN:VCARD", "mailto:", wa.me
-    parse(text: string): T | null; // payload → form state
-    build(state: T): string; // form state → payload
-    toParams(state: T): Record<string, string>; // form state → query params
-  }
-  ```
-
-  Today this logic is duplicated across four components using three different
-  query-sync styles (`wifi-template.tsx`, `whatsapp-template.tsx` and
-  `contact-template.tsx` each hand-roll `router.replace` + `searchParams`,
-  while `email-template.tsx` uses `useQueryParams`). A single registry gives
-  scan-to-prefill one dispatch point and reduces each new template to one file.
-
 - [ ] **Persist the uploaded logo** — `store.ts` currently holds
-      `URL.createObjectURL(file)`. A blob URL dies on reload and never reaches the
-      query string, so a saved QR would silently lose its logo and a shared link
-      would render without it. Store the image as a `Blob` in IndexedDB (via
-      `idb-keyval`) keyed by id; avoid localStorage, where base64 logos quickly hit
-      the ~5MB quota.
-
-### Known parser bugs to fix alongside the registry
-
-These are harmless today but become user-facing the moment scanning ships.
-
-- [ ] **`parseWifiQR` is too strict** — the regex
-      `^WIFI:T:(.*?);S:(.*?);P:(.*?);;?$` hard-codes the field order `T→S→P`
-      and does not handle escaped `\;`, `\:` or `\\` inside SSID and password.
-      WiFi QR codes produced by other generators often order fields
-      differently and would fail to parse.
-- [ ] **Templates parse only once** — `wifi`, `whatsapp` and `contact` run
-      their parser in a `useEffect` with an empty dependency array, so a
-      payload arriving after mount (as scanning does) never populates the
-      form. Depend on `text` instead.
-- [ ] **Email has no parser** — `email-template.tsx` only builds `mailto:`
-      payloads. Scanning a `mailto:` QR cannot prefill the form until a
-      `parse` counterpart exists.
+      `URL.createObjectURL(file)`. A blob URL dies on reload and never reaches
+      the query string, so a saved QR would silently lose its logo and a shared
+      link would render without it. Store the image as a `Blob` in IndexedDB
+      (via `idb-keyval`) keyed by id; avoid localStorage, where base64 logos
+      quickly hit the ~5MB quota.
 
 ## Studio Features
 
-- [ ] **Share as image (no download)** — share the rendered QR straight to
-      WhatsApp, Instagram or any share target using the Web Share API Level 2:
-
-  ```ts
-  const blob = await qr.getRawData("png");
-  const file = new File([blob], `${name}.png`, { type: "image/png" });
-  if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ files: [file], title: name });
-  }
-  ```
-
-  Requirements:
-
-  - Feature-detect and hide the button where unsupported — Web Share with
-    files is unavailable on Firefox desktop and Chrome desktop on Linux.
-  - Pre-generate the blob on config change (debounced) so the click handler
-    calls `share()` with a ready `File`. Long `await` chains before `share()`
-    can lose the user-gesture requirement on Safari.
-  - Share PNG only; SVG is poorly supported by target apps.
-  - Fallback chain: Web Share →
-    `navigator.clipboard.write([new ClipboardItem({ "image/png": blob })])` →
-    Copy link → Download.
-
-- [ ] **Copy link** — a second, separate action next to Share. Because the URL
-      already encodes the full configuration, the recipient can open and keep
-      editing the design. Note in the UI that the uploaded logo is _not_
-      included in the link (it cannot be encoded in a URL). A future `img_url`
-      param could carry a remote logo.
-
 - [ ] **Scan a QR code to prefill Studio** — decode an existing QR and load it
-      into Studio for restyling, then save it.
+      into Studio for restyling. The codec side is done; what's left is the
+      decoder and the UI.
 
   - Ship **file upload, clipboard paste and drag-and-drop first**; camera
     capture second. File decoding is ~30 lines (image → canvas →
@@ -120,9 +106,10 @@ These are harmless today but become user-facing the moment scanning ships.
     `jsqr` fallback for Safari and Firefox. The decoder must sit behind a
     dynamic import — most visitors never scan, so it should stay out of the
     main Studio bundle.
-  - Route the decoded string through `codec.detect()`; fall back to the
-    free-text template for anything unrecognized (plain URLs, tracking
-    numbers) rather than showing an error.
+  - Feed the decoded string to `detectCodec()`, then write
+    `?template=<codec.key>` plus `text` (and the codec's own params, if it has
+    them) — `usePayloadForm` picks it up from there. Unrecognized payloads land
+    on free text by design, not as an error.
   - Treat decoded content as untrusted: render it as text first and never
     auto-navigate, so the user sees what they scanned before clicking. Keep
     `rel="noopener noreferrer"` on the rendered link in
@@ -164,10 +151,14 @@ These are harmless today but become user-facing the moment scanning ships.
 
 ## New QR Templates
 
-All of these can be built fully client-side, following the same pattern as the
-existing templates (an entry in `constants/template.data.ts`, a form component
-in `components/`, and a payload builder). Once the codec registry lands, each
-one is a single file under `utils/payloads/` plus its form.
+Each one is now four small pieces, all client-side:
+
+1. a codec in `utils/payloads/<name>.ts` implementing `PayloadCodec`,
+2. its registration in `utils/payloads/index.ts` (`codecs` map and, if it has a
+   recognisable prefix, `DETECTION_ORDER` — before `textCodec`),
+3. a form component in `components/` built on `usePayloadForm`,
+4. entries in `constants/template.data.ts` (`templateOptions` for the picker,
+   `templates` for the gallery card) and in `TemplateKey`.
 
 ### High priority — low effort, real demand
 
@@ -215,14 +206,23 @@ Architectural decisions, recorded so they don't get relitigated.
   storage, and creates dead QR codes if the service ever stops.
 - **Camera-first scanning** — more effort and narrower reach than file upload
   and paste. Kept as the second step of the scan feature, not the entry point.
+- **Logos in shared links** — an image can't be encoded in a URL. Studio says
+  so explicitly when a logo is set. A remote-logo `img_url` param could carry
+  one later, at the cost of depending on someone else's hosting.
 
 ## Other Ideas
 
+- [ ] **Tests for the codecs.** They are pure functions with a lot of edge
+      cases (escaping, field order, round-trips) and are the foundation the
+      scan feature sits on; a throwaway script written during the refactor
+      already caught a real parsing bug. Needs a decision on the runner —
+      `tsx` plus a plain assertion script is the smallest thing that works and
+      matches the project's zero-test-infra starting point.
 - [ ] Logo upload presets in Studio (common social icons as embedded logos).
 - [ ] Shareable template gallery — curated style presets encoded as Studio
       URLs, since every style setting already lives in the URL.
 - [ ] Compress the Studio state into a single `?d=` param (deflate +
       base64url). Long vCard payloads produce URLs that some chat apps
       truncate when shared.
-- [ ] Rename `hokks/` to `hooks/`. Only two files and three importers today —
-      cheapest to fix before that count grows.
+- [ ] Rename `hokks/` to `hooks/`. Four files and a handful of importers
+      today — cheapest to fix before that count grows.
