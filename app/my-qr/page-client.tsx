@@ -26,7 +26,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import QrPreviewDialog from "@/components/qr-preview-dialog";
 import SavedQrShare from "@/components/saved-qr-share";
@@ -70,6 +70,7 @@ function SavedQrList() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
   const [preview, setPreview] = useState<SavedQr | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<SavedQr | null>(null);
 
   const refresh = useCallback(async () => {
     setRecords(await listSavedQrs());
@@ -97,10 +98,23 @@ function SavedQrList() {
     router.push(`/studio?${record.params}${record.params ? "&" : ""}id=${record.id}`);
   };
 
-  const remove = async (record: SavedQr) => {
-    await deleteSavedQr(record.id);
-    await refresh();
-    addToast({ title: "Deleted", description: record.name, color: "success" });
+  const remove = async () => {
+    const record = pendingDelete;
+
+    if (!record) return;
+
+    // Dismissed first, like the delete-all flow: leaving the dialog up behind a
+    // spinner invites a second press on a record that is already going away.
+    setPendingDelete(null);
+    setIsBusy(true);
+
+    try {
+      await deleteSavedQr(record.id);
+      await refresh();
+      addToast({ title: "Deleted", description: record.name, color: "success" });
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   const commitRename = async (record: SavedQr) => {
@@ -376,7 +390,7 @@ function SavedQrList() {
                     color="danger"
                     variant="flat"
                     aria-label={`Delete ${record.name}`}
-                    onPress={() => void remove(record)}
+                    onPress={() => setPendingDelete(record)}
                   >
                     <Trash2 size={14} />
                   </Button>
@@ -392,6 +406,37 @@ function SavedQrList() {
         onClose={() => setPreview(null)}
         onOpenInStudio={(record) => void open(record)}
       />
+
+      <Modal isOpen={!!pendingDelete} size="sm" onClose={() => setPendingDelete(null)}>
+        <ModalContent>
+          {pendingDelete && (
+            <>
+              <ModalHeader>Delete this saved code?</ModalHeader>
+
+              <ModalBody>
+                <p className="text-sm text-foreground/70">
+                  This removes{" "}
+                  <span className="wrap-break-words font-medium text-foreground">
+                    {pendingDelete.name}
+                  </span>
+                  {pendingDelete.logoKey ? " and the logo saved with it" : " "} from this browser.
+                  It can&apos;t be undone — export a backup first if you might want it back.
+                </p>
+              </ModalBody>
+
+              <ModalFooter>
+                <Button size="sm" variant="light" onPress={() => setPendingDelete(null)}>
+                  Cancel
+                </Button>
+
+                <Button size="sm" color="danger" onPress={() => void remove()}>
+                  Delete
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
 
       <Modal isOpen={clearAll.isOpen} size="sm" onOpenChange={clearAll.onOpenChange}>
         <ModalContent>
