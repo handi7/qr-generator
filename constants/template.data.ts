@@ -20,6 +20,7 @@ export const templates: Template[] = [
     accent: "from-primary/20 via-sky-400/15 to-emerald-300/10",
     icon: "link-2",
     highlights: ["Instant setup", "Works everywhere", "Great for links"],
+    featured: true,
   },
   {
     title: "WiFi",
@@ -30,6 +31,7 @@ export const templates: Template[] = [
     accent: "from-sky-500/20 via-cyan-400/15 to-primary/10",
     icon: "wifi",
     highlights: ["Faster check-in", "Fewer support asks", "Event-friendly"],
+    featured: true,
   },
   {
     title: "WhatsApp",
@@ -39,6 +41,7 @@ export const templates: Template[] = [
     accent: "from-emerald-500/20 via-green-400/15 to-teal-300/10",
     icon: "message-circle",
     highlights: ["Prefilled message", "Higher engagement", "Simple CTA"],
+    featured: true,
   },
   {
     title: "Contact vCard",
@@ -68,5 +71,6 @@ export const templates: Template[] = [
     accent: "from-rose-500/20 via-red-400/15 to-orange-300/10",
     icon: "wallet",
     highlights: ["Scan to load", "Payload untouched", "Merchant shown"],
+    featured: true,
   },
 ];

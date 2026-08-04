@@ -3,7 +3,17 @@
 import Link from "next/link";
 
 import { type Variants, motion } from "framer-motion";
-import { ArrowRight, FileDown, Link2, Sparkles, UserRoundCheck } from "lucide-react";
+import {
+  ArrowRight,
+  FileDown,
+  FileJson,
+  HardDrive,
+  Link2,
+  ScanLine,
+  ShieldCheck,
+  Sparkles,
+  UserRoundCheck,
+} from "lucide-react";
 
 import Icon from "@/components/Shared/Icon";
 import HeroQr from "@/components/hero-qr";
@@ -25,7 +35,9 @@ const item: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
 };
 
-const featuredTemplates = templates.slice(0, 4);
+// Opt-in via the `featured` flag rather than a positional slice, so adding a
+// template is a decision about whether it belongs here — not a silent omission.
+const featuredTemplates = templates.filter((template) => template.featured);
 
 export default function HomePageClient() {
   return (
@@ -61,8 +73,9 @@ export default function HomePageClient() {
 
           <motion.p variants={item} className="max-w-xl text-sm text-foreground/75 sm:text-base">
             GaweQR gives you a beautiful workflow to generate links, WiFi access, WhatsApp messages,
-            and contact cards. Every style setting stays in the URL, so your designs are easy to
-            reuse and share.
+            contact cards, and email. Scan a QR you already have — even a QRIS — to restyle it
+            without retyping a thing. Every style setting stays in the URL, so your designs are easy
+            to reuse and share.
           </motion.p>
 
           <motion.div variants={item} className="flex flex-wrap items-center gap-3">
@@ -75,10 +88,11 @@ export default function HomePageClient() {
             </Link>
 
             <Link
-              href="/studio?template=contact"
+              href="/studio?scan=1"
               className="inline-flex items-center gap-2 rounded-xl border border-foreground/15 bg-background/70 px-5 py-3 text-sm font-medium backdrop-blur transition-colors hover:bg-foreground/5"
             >
-              Try Contact vCard
+              <ScanLine size={16} />
+              Scan a QR
             </Link>
           </motion.div>
 
@@ -89,6 +103,10 @@ export default function HomePageClient() {
             <li className="inline-flex items-center gap-1.5">
               <UserRoundCheck size={14} className="text-primary" />
               No sign-up needed
+            </li>
+            <li className="inline-flex items-center gap-1.5">
+              <ShieldCheck size={14} className="text-primary" />
+              Nothing leaves your device
             </li>
             <li className="inline-flex items-center gap-1.5">
               <Link2 size={14} className="text-primary" />
@@ -192,20 +210,21 @@ export default function HomePageClient() {
           {[
             {
               step: "1",
-              title: "Pick a template",
-              description: "Start from a link, WiFi, WhatsApp, contact, or email template.",
+              title: "Start fresh or scan",
+              description:
+                "Pick a template — link, WiFi, WhatsApp, contact, or email — or scan a code you already have with the camera, an image, or a paste.",
             },
             {
               step: "2",
               title: "Style it in Studio",
               description:
-                "Tune colors, dot shapes, corners, and margins with a live preview of every change.",
+                "Tune colors, dot shapes, corners, and margins with a live preview of every change. Scanning keeps your style and swaps only the content.",
             },
             {
               step: "3",
-              title: "Download & share",
+              title: "Download, share, or save",
               description:
-                "Export in PNG, SVG, JPEG, or WEBP. Every style setting stays in the URL, so anyone opening your link sees the same design.",
+                "Export in PNG, SVG, JPEG, or WEBP, or keep it in My QR to reopen later. Every style setting stays in the URL, so anyone opening your link sees the same design.",
             },
           ].map((step) => (
             <motion.div
@@ -221,6 +240,68 @@ export default function HomePageClient() {
             </motion.div>
           ))}
         </div>
+      </motion.section>
+
+      <motion.section
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        className="mx-auto mt-16 w-full max-w-7xl"
+      >
+        <motion.h2 variants={item} className="mb-2 text-xl font-semibold sm:text-2xl">
+          Your Codes Stay Yours
+        </motion.h2>
+
+        <motion.p variants={item} className="mb-5 max-w-2xl text-sm text-foreground/70">
+          Save the codes you use often and pick them up again later. There is no account, and no
+          server holding any of it.
+        </motion.p>
+
+        <div className="grid gap-4 sm:grid-cols-3">
+          {[
+            {
+              icon: HardDrive,
+              title: "Saved on your device",
+              description:
+                "Keep codes in My QR, rename them, and reopen any of them in Studio exactly as you left them — logo included.",
+            },
+            {
+              icon: FileJson,
+              title: "Backup and restore",
+              description:
+                "Export everything to a JSON file and load it back on another browser. Clearing your browsing data is the only thing that can remove them.",
+            },
+            {
+              icon: ShieldCheck,
+              title: "No accounts, ever",
+              description:
+                "Nothing you scan or save is uploaded. Saved codes are stored unencrypted in this browser, so delete them on a shared computer.",
+            },
+          ].map((feature) => (
+            <motion.div
+              key={feature.title}
+              variants={item}
+              className="rounded-2xl border border-foreground/10 bg-background/70 p-5 backdrop-blur"
+            >
+              <span className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <feature.icon size={18} />
+              </span>
+              <h3 className="mb-2 text-base font-semibold">{feature.title}</h3>
+              <p className="text-sm text-foreground/70">{feature.description}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div variants={item} className="mt-6 flex justify-center">
+          <Link
+            href="/my-qr"
+            className="inline-flex items-center gap-2 rounded-xl border border-foreground/15 bg-background/70 px-5 py-3 text-sm font-medium backdrop-blur transition-colors hover:bg-foreground/5"
+          >
+            Open My QR
+            <ArrowRight size={16} />
+          </Link>
+        </motion.div>
       </motion.section>
 
       <motion.section
