@@ -120,6 +120,43 @@ the app renders it through an object URL.
 - `createStore()` is safe at module scope: idb-keyval opens the database lazily
   on first access, so importing this from a client component doesn't break SSR.
 
+### QRIS — scan and restyle — `utils/payloads/qris.ts`
+
+A payment code can't be authored here, only re-encoded. That makes `qris` the
+one codec that inverts the usual contract, and every rule below follows from it.
+
+- **`build()` returns the payload verbatim.** Every other codec composes from
+  form state; this one must not. Tag 63 is a CRC-16/CCITT-FALSE over the whole
+  payload, so re-serialising it at all — reordering a field, trimming a value —
+  invalidates it. There is no state to compose from anyway.
+- **The template is read-only and skips `usePayloadForm`.** No fields to bind,
+  and nothing to write back. `defaultText` is `""`; picking QRIS from the
+  dropdown lands on an empty state that points at the scanner.
+- **An empty QRIS renders a blank preview, not the site URL.** `page-client.tsx`
+  special-cases it alongside `email` — a placeholder that silently encodes
+  `gaweqr.my.id` would be a payment code pointing at the wrong place.
+- **`detect()` runs a full TLV walk, not a prefix match**, and additionally
+  requires tag 00 = `01`, tag 58 = `ID`, and a merchant name. Surviving the walk
+  is what keeps a bare string of digits falling through to `text`.
+- **`detect()` deliberately accepts a broken checksum** so `parse()` can report
+  it. A QRIS-shaped payload that fails CRC is almost always a hand-edited `text`
+  param; routing it to the template so the form can say so beats letting it pass
+  silently as free text.
+- **Locate tag 63 by position, never `indexOf("6304")`.** Those digits occur
+  legitimately inside earlier values — a merchant literally named `6304 MART`
+  is a covered case. The checksum is a fixed-width block at the very end.
+- **The merchant name is always shown, prominently and uneditable.** Restyling
+  cannot change who gets paid — tag 59 is inside the payload and the payer's app
+  displays it at checkout — so surfacing it is what makes the tool protective
+  rather than a way to disguise a code.
+- Style stays unrestricted; the form warns instead. A logo eats the
+  error-correction margin a dense payment payload needs to survive print and
+  glare, and a dynamic QRIS (tag 01 = `12`) is amount-locked and usually
+  single-use, so printing one for repeat payments is wrong.
+- **Not yet checked against the official QRIS/BI specification** — whether it
+  mandates a minimum error-correction level or constrains reprinting. Worth
+  confirming before promoting the template.
+
 ### Not covered by a codec
 
 The free-text form stays inline in `app/studio/configuration.tsx`: it is a
@@ -201,9 +238,13 @@ Each one is now four small pieces, all client-side:
 
 ### Considered and rejected (for now)
 
-- **QRIS / payments** — QRIS payloads follow the EMVCo standard and are issued
-  by licensed payment providers; they can't legitimately be generated
-  client-side.
+- **Generating a QRIS from scratch** — still rejected, and for the original
+  reason: QRIS payloads follow the EMVCo standard and are issued by licensed
+  payment providers, so there is no legitimate way to author one client-side.
+  What shipped instead is **re-encoding** — scanning a QRIS you already hold and
+  restyling it. The two are not the same decision, and the distinction is the
+  thing worth remembering: the `qris` codec has no form and never composes a
+  payload. See "QRIS — scan and restyle" above.
 - **MeCard** — duplicates the existing Contact vCard template.
 - **Smart app-download link** (iOS/Android detection) — requires a redirect
   backend, which is outside the current static architecture.

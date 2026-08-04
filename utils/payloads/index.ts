@@ -1,5 +1,6 @@
 import contactCodec from "./contact";
 import emailCodec from "./email";
+import qrisCodec from "./qris";
 import textCodec from "./text";
 import whatsappCodec from "./whatsapp";
 import wifiCodec from "./wifi";
@@ -13,18 +14,22 @@ export const codecs: Record<TemplateKey, AnyPayloadCodec> = {
   whatsapp: whatsappCodec,
   contact: contactCodec,
   email: emailCodec,
+  qris: qrisCodec,
 };
 
 /**
  * Most specific first. `wifi`, `contact` and `email` are keyed off a scheme or
  * marker so they can't collide; `whatsapp` only claims known WhatsApp hosts,
- * which keeps every other URL falling through to `text`.
+ * which keeps every other URL falling through to `text`. `qris` claims only
+ * payloads that survive a full EMVCo TLV walk, so it sits last before the
+ * catch-all — a bare string of digits still ends up as `text`.
  */
 const DETECTION_ORDER: AnyPayloadCodec[] = [
   wifiCodec,
   contactCodec,
   emailCodec,
   whatsappCodec,
+  qrisCodec,
   textCodec,
 ];
 
@@ -72,4 +77,4 @@ export function paramsForPayload(current: URLSearchParams, payload: string): URL
   return params;
 }
 
-export { contactCodec, emailCodec, textCodec, whatsappCodec, wifiCodec };
+export { contactCodec, emailCodec, qrisCodec, textCodec, whatsappCodec, wifiCodec };

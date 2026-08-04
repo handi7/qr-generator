@@ -17,6 +17,7 @@ import { useDebouncedCallback } from "use-debounce";
 import InputNumber from "@/components/Shared/InputNumber";
 import ContactTemplate from "@/components/contact-template";
 import EmailTemplate from "@/components/email-template";
+import QrisTemplate from "@/components/qris-template";
 import ScanQrDialog from "@/components/scan-qr-dialog";
 import WhatsappTemplate from "@/components/whatsapp-template";
 import WifiTemplate from "@/components/wifi-template";
@@ -76,6 +77,9 @@ function ConfigurationSection() {
 
       case "email":
         return <EmailTemplate />;
+
+      case "qris":
+        return <QrisTemplate />;
 
       default:
         return (

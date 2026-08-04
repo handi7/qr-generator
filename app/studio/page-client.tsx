@@ -85,7 +85,10 @@ export default function QRStudio() {
 
   useEffect(() => {
     if (text) setData(text);
-    else if (currentType === "email") setData("");
+    // Neither template has a sensible starting payload, and falling back to the
+    // site URL would be worse than blank — a QRIS placeholder that silently
+    // encodes gaweqr.my.id is a payment code pointing at the wrong place.
+    else if (currentType === "email" || currentType === "qris") setData("");
     else setData("https://gaweqr.my.id");
 
     setOptions((prev) => getOptions(prev));

@@ -8,6 +8,7 @@ export const templateOptions: TemplateOption[] = [
   { label: "Whatsapp", key: "whatsapp" },
   { label: "Contact (vCard)", key: "contact" },
   { label: "Email", key: "email" },
+  { label: "QRIS (scan to restyle)", key: "qris" },
 ];
 
 export const templates: Template[] = [
@@ -57,5 +58,15 @@ export const templates: Template[] = [
     accent: "from-amber-400/20 via-orange-400/15 to-rose-300/10",
     icon: "mail",
     highlights: ["Mailto ready", "Shareable URL", "Body supported"],
+  },
+  {
+    title: "QRIS",
+    subtitle: "Payments",
+    description:
+      "Scan your existing QRIS to restyle it for a standee or menu. The payload is reused untouched — it is never generated here.",
+    href: "/studio?template=qris",
+    accent: "from-rose-500/20 via-red-400/15 to-orange-300/10",
+    icon: "wallet",
+    highlights: ["Scan to load", "Payload untouched", "Merchant shown"],
   },
 ];

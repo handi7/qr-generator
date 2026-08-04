@@ -1,8 +1,8 @@
 import { IconName } from "lucide-react/dynamic";
 
-export type TemplateType = "text" | "wifi" | "whatsapp" | "contact" | "email";
+export type TemplateType = "text" | "wifi" | "whatsapp" | "contact" | "email" | "qris";
 
-export type TemplateKey = "text" | "wifi" | "whatsapp" | "contact" | "email";
+export type TemplateKey = "text" | "wifi" | "whatsapp" | "contact" | "email" | "qris";
 
 export interface TemplateOption {
   label: string;
