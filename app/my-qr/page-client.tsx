@@ -186,7 +186,7 @@ function SavedQrList() {
   };
 
   return (
-    <div className="relative min-h-[100dvh] w-full overflow-hidden">
+    <div className="relative min-h-dvh w-full overflow-hidden">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -left-20 top-20 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
         <div className="absolute right-0 top-10 h-80 w-80 rounded-full bg-sky-400/15 blur-3xl" />
