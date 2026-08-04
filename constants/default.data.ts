@@ -1,3 +1,5 @@
+import { Options } from "qr-code-styling";
+
 import {
   BackgroundOptions,
   CornersDotOptions,
@@ -5,7 +7,6 @@ import {
   DotsOptions,
   ImageOptions,
 } from "@/types/default.type";
-import { Options } from "qr-code-styling";
 
 export const mainBg: BackgroundOptions = { color: "#ffffff", round: 0.08 };
 

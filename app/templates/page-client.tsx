@@ -1,10 +1,13 @@
 "use client";
 
-import { templates } from "@/constants/template.data";
-import { motion, type Variants } from "framer-motion";
-import { ArrowRight, Sparkles } from "lucide-react";
 import Link from "next/link";
+
+import { type Variants, motion } from "framer-motion";
+import { ArrowRight, Sparkles } from "lucide-react";
+
 import Icon from "../../components/Shared/Icon";
+
+import { templates } from "@/constants/template.data";
 
 const container = {
   hidden: { opacity: 0 },

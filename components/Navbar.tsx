@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+
 import React from "react";
-import BrandMark from "./brand-mark";
+
 import ThemeSwitch from "./ThemeSwitch";
+import BrandMark from "./brand-mark";
 
 function Navbar() {
   return (
@@ -30,6 +32,14 @@ function Navbar() {
             className="rounded-lg px-3 py-2 text-sm text-foreground/80 transition-colors duration-200 hover:bg-foreground/5 hover:text-foreground"
           >
             Templates
+          </Link>
+
+          <Link
+            key="My QR"
+            href="/my-qr"
+            className="rounded-lg px-3 py-2 text-sm text-foreground/80 transition-colors duration-200 hover:bg-foreground/5 hover:text-foreground"
+          >
+            My QR
           </Link>
 
           <Link

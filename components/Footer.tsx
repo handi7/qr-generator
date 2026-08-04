@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import BrandMark from "./brand-mark";
 
 function GithubIcon({ size = 14 }: { size?: number }) {

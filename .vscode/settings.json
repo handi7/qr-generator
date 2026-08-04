@@ -1,3 +1,8 @@
 {
-  "cSpell.words": ["heroui", "turbopack"]
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "cSpell.words": ["heroui", "trivago", "turbopack"]
 }

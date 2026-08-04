@@ -1,5 +1,22 @@
 "use client";
 
+import { useRouter, useSearchParams } from "next/navigation";
+
+import {
+  Accordion,
+  AccordionItem,
+  Button,
+  Image,
+  Radio,
+  RadioGroup,
+  Slider,
+  addToast,
+} from "@heroui/react";
+import { CornerDotType, CornerSquareType, DotType } from "qr-code-styling";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { HexAlphaColorPicker } from "react-colorful";
+import { useDebouncedCallback } from "use-debounce";
+
 import {
   mainBg,
   mainCornersDot,
@@ -9,12 +26,7 @@ import {
 } from "@/constants/default.data";
 import { useImageStore } from "@/store";
 import { OptionsForm } from "@/types/form.type";
-import { Accordion, AccordionItem, Button, Image, Radio, RadioGroup, Slider } from "@heroui/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { CornerDotType, CornerSquareType, DotType } from "qr-code-styling";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { HexAlphaColorPicker } from "react-colorful";
-import { useDebouncedCallback } from "use-debounce";
+import { MAX_LOGO_BYTES, rejectLogo } from "@/utils/logo.utils";
 
 function OptionsSection() {
   const router = useRouter();
@@ -55,12 +67,50 @@ function OptionsSection() {
     else setQuery(key, value);
   };
 
-  const onSelectImage = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) {
-      const image = URL.createObjectURL(e.target.files[0]);
-      store.setImage(image);
+  const onSelectImage = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    // Clear it so picking the same file again still fires onChange.
+    e.target.value = "";
+
+    if (!file) return;
+
+    const rejection = rejectLogo(file);
+
+    if (rejection === "type") {
+      addToast({ title: "That file isn't an image", color: "danger" });
+
+      return;
+    }
+
+    if (rejection === "size") {
+      addToast({
+        title: "That image is too large",
+        description: `Keep the logo under ${MAX_LOGO_BYTES / (1024 * 1024)}MB.`,
+        color: "danger",
+      });
+
+      return;
+    }
+
+    const persisted = await store.setImage(file);
+
+    if (!persisted) {
+      addToast({
+        title: "Logo added, but not saved",
+        description: "This browser is blocking local storage, so it will be gone after a reload.",
+        color: "warning",
+      });
     }
   };
+
+  // Selected rather than taken off `store`: the unselected hook returns a fresh
+  // object on every state change, which would re-run this effect each time.
+  const restoreImage = useImageStore((state) => state.restoreImage);
+
+  useEffect(() => {
+    void restoreImage();
+  }, [restoreImage]);
 
   useEffect(() => {
     setOptions((prev) => ({
@@ -130,8 +180,14 @@ function OptionsSection() {
                   />
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="bg-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="bg-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.bg_color}
                     onChange={(value) => onChange("bg_color", value, { debounce: true })}
@@ -158,8 +214,14 @@ function OptionsSection() {
                   </RadioGroup>
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="dot-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="dot-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.dot_color}
                     onChange={(value) => onChange("dot_color", value, { debounce: true })}
@@ -186,8 +248,14 @@ function OptionsSection() {
                   </RadioGroup>
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="corner-dot-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="corner-dot-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.corner_dot_color}
                     onChange={(value) => onChange("corner_dot_color", value, { debounce: true })}
@@ -215,8 +283,14 @@ function OptionsSection() {
                   </RadioGroup>
                 </div>
 
-                <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
-                  <label className="mb-2 block text-sm font-medium">Color</label>
+                <div
+                  role="group"
+                  aria-labelledby="corner-square-color-label"
+                  className="rounded-xl border border-foreground/10 bg-background/70 p-3"
+                >
+                  <span id="corner-square-color-label" className="mb-2 block text-sm font-medium">
+                    Color
+                  </span>
                   <HexAlphaColorPicker
                     color={options.corner_square_color}
                     onChange={(value) => onChange("corner_square_color", value, { debounce: true })}
@@ -242,13 +316,19 @@ function OptionsSection() {
                     radius="sm"
                     color="danger"
                     variant="flat"
-                    onPress={store.removeImage}
+                    onPress={() => void store.removeImage()}
                   >
                     Delete Image
                   </Button>
                 )}
 
-                <input hidden id="logo_input" type="file" onChange={onSelectImage} />
+                <input
+                  hidden
+                  accept="image/*"
+                  id="logo_input"
+                  type="file"
+                  onChange={(event) => void onSelectImage(event)}
+                />
 
                 <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
                   <Slider

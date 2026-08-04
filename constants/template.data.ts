@@ -1,22 +1,14 @@
 import { Template, TemplateOption } from "@/types/template.type";
 
+// Starting payloads live on each codec's `defaultText`, not here, so a template
+// has exactly one place that owns its format.
 export const templateOptions: TemplateOption[] = [
   { label: "Free Text", key: "text" },
-  { label: "Wifi", key: "wifi", default: "WIFI:T:WPA;S:Wifi Name;P:Wifi Password;;" },
-  {
-    label: "Whatsapp",
-    key: "whatsapp",
-    default: `https://wa.me/628?text=Halo%20boleh%20tanya%3F`,
-  },
-  {
-    label: "Contact (vCard)",
-    key: "contact",
-    default: `BEGIN:VCARD\nVERSION:3.0\nFN:John Doe\nEND:VCARD`,
-  },
-  {
-    label: "Email",
-    key: "email",
-  },
+  { label: "Wifi", key: "wifi" },
+  { label: "Whatsapp", key: "whatsapp" },
+  { label: "Contact (vCard)", key: "contact" },
+  { label: "Email", key: "email" },
+  { label: "QRIS (scan to restyle)", key: "qris" },
 ];
 
 export const templates: Template[] = [
@@ -66,5 +58,15 @@ export const templates: Template[] = [
     accent: "from-amber-400/20 via-orange-400/15 to-rose-300/10",
     icon: "mail",
     highlights: ["Mailto ready", "Shareable URL", "Body supported"],
+  },
+  {
+    title: "QRIS",
+    subtitle: "Payments",
+    description:
+      "Scan your existing QRIS to restyle it for a standee or menu. The payload is reused untouched — it is never generated here.",
+    href: "/studio?template=qris",
+    accent: "from-rose-500/20 via-red-400/15 to-orange-300/10",
+    icon: "wallet",
+    highlights: ["Scan to load", "Payload untouched", "Merchant shown"],
   },
 ];

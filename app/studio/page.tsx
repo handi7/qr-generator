@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+
 import QRStudio from "./page-client";
 import QrCode from "./qr";
 

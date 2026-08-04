@@ -1,47 +1,13 @@
 "use client";
 
-import useDebouncedCallback from "@/hokks/useDebounceCallback";
-import useQueryParams from "@/hokks/useQueryParams";
 import { Input, Textarea } from "@heroui/react";
-import React, { useEffect } from "react";
+import React from "react";
 
-interface EmailData {
-  to: string;
-  cc: string;
-  bcc: string;
-  subject: string;
-  body: string;
-}
+import usePayloadForm from "@/hokks/usePayloadForm";
+import emailCodec from "@/utils/payloads/email";
 
 function EmailTemplate() {
-  const query = useQueryParams();
-
-  const to = query.get("to");
-  const cc = query.get("cc");
-  const bcc = query.get("bcc");
-  const subject = query.get("subject");
-  const body = query.get("body");
-
-  const { debounced } = useDebouncedCallback((key: keyof EmailData, value: string) => {
-    query.update({ [key]: value });
-  }, 400);
-
-  useEffect(() => {
-    const generated = generateEmailQR({ to, cc, bcc, subject, body });
-
-    const params: Record<string, string> = {
-      to: normalizeRecipients(to),
-      cc: normalizeRecipients(cc),
-      bcc: normalizeRecipients(bcc),
-      subject: subject,
-      body: body,
-    };
-
-    if (generated) params["text"] = generated;
-    else delete params["text"];
-
-    query.update(params);
-  }, [to, cc, bcc, subject, body]);
+  const { data, patch } = usePayloadForm(emailCodec);
 
   return (
     <div className="flex flex-col gap-3 max-w-md">
@@ -51,9 +17,9 @@ function EmailTemplate() {
         label="To"
         name="to"
         placeholder="hello@example.com"
-        defaultValue={to}
-        onChange={(e) => debounced("to", e.target.value)}
-        isInvalid={!to.trim()}
+        value={data.to}
+        onChange={(e) => patch({ to: e.target.value })}
+        isInvalid={!data.to.trim()}
         errorMessage="Recipient is required"
       />
 
@@ -62,8 +28,8 @@ function EmailTemplate() {
         label="CC"
         name="cc"
         placeholder="team@example.com"
-        defaultValue={cc}
-        onChange={(e) => debounced("cc", e.target.value)}
+        value={data.cc}
+        onChange={(e) => patch({ cc: e.target.value })}
       />
 
       <Input
@@ -71,8 +37,8 @@ function EmailTemplate() {
         label="BCC"
         name="bcc"
         placeholder="audit@example.com"
-        defaultValue={bcc}
-        onChange={(e) => debounced("bcc", e.target.value)}
+        value={data.bcc}
+        onChange={(e) => patch({ bcc: e.target.value })}
       />
 
       <Input
@@ -80,8 +46,8 @@ function EmailTemplate() {
         label="Subject"
         name="subject"
         placeholder="Business Inquiry"
-        defaultValue={subject}
-        onChange={(e) => debounced("subject", e.target.value)}
+        value={data.subject}
+        onChange={(e) => patch({ subject: e.target.value })}
       />
 
       <Textarea
@@ -89,40 +55,11 @@ function EmailTemplate() {
         label="Body"
         name="body"
         placeholder="Hello there"
-        defaultValue={body}
-        onChange={(e) => debounced("body", e.target.value)}
+        value={data.body}
+        onChange={(e) => patch({ body: e.target.value })}
       />
     </div>
   );
-}
-
-function normalizeRecipients(value: string) {
-  return value
-    .split(",")
-    .map((recipient) => recipient.trim())
-    .filter(Boolean)
-    .join(",");
-}
-
-function generateEmailQR(data: EmailData): string {
-  const to = normalizeRecipients(data.to);
-  if (!to) return "";
-
-  const cc = normalizeRecipients(data.cc);
-  const bcc = normalizeRecipients(data.bcc);
-  const subject = data.subject.trim();
-  const body = data.body;
-
-  const params = new URLSearchParams();
-
-  if (cc) params.set("cc", cc);
-  if (bcc) params.set("bcc", bcc);
-  if (subject) params.set("subject", subject);
-  if (body) params.set("body", body);
-
-  const query = params.toString();
-
-  return `mailto:${to}${query ? `?${query}` : ""}`;
 }
 
 export default EmailTemplate;

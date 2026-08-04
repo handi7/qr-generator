@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import QRTemplates from "@/app/templates/page-client";
 
 export const metadata: Metadata = {

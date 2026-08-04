@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
 import {
   Autocomplete,
   AutocompleteItem,
@@ -10,16 +11,20 @@ import {
   RadioGroup,
   Slider,
 } from "@heroui/react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { templateOptions } from "@/constants/template.data";
-import WifiTemplate from "@/components/wifi-template";
-import WhatsappTemplate from "@/components/whatsapp-template";
+
+import InputNumber from "@/components/Shared/InputNumber";
 import ContactTemplate from "@/components/contact-template";
 import EmailTemplate from "@/components/email-template";
+import QrisTemplate from "@/components/qris-template";
+import ScanQrDialog from "@/components/scan-qr-dialog";
+import WhatsappTemplate from "@/components/whatsapp-template";
+import WifiTemplate from "@/components/wifi-template";
+import { templateOptions } from "@/constants/template.data";
 import useQueryParams from "@/hokks/useQueryParams";
-import InputNumber from "@/components/Shared/InputNumber";
 import { TemplateType } from "@/types/template.type";
+import { codecs } from "@/utils/payloads";
 import { normalizeTemplateType } from "@/utils/template.utils";
 
 interface DataState {
@@ -73,6 +78,9 @@ function ConfigurationSection() {
       case "email":
         return <EmailTemplate />;
 
+      case "qris":
+        return <QrisTemplate />;
+
       default:
         return (
           <Input
@@ -117,19 +125,24 @@ function ConfigurationSection() {
             label="Select Template"
             placeholder="Search template"
             onSelectionChange={(key) => {
-              const selected = templateOptions.find((item) => item.key === key?.toString());
               const nextType = normalizeTemplateType(key?.toString());
-              const nextText =
-                nextType === "email" ? "" : selected?.default || "https://gaweqr.my.id/";
 
+              // reset() drops every param, so the outgoing template can't leave
+              // its own fields behind in the URL. `id` is carried over on
+              // purpose: it is the saved record's identity, not its content, so
+              // changing template should still update that record rather than
+              // quietly detach from it.
               query.reset({
-                text: nextText,
+                text: codecs[nextType].defaultText,
                 template: nextType,
+                id: query.get("id") || undefined,
               });
             }}
           >
             {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
           </Autocomplete>
+
+          <ScanQrDialog />
 
           <div className="rounded-xl border border-foreground/10 bg-background/70 p-3">
             {renderTemplate(currentType)}

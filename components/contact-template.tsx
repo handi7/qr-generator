@@ -1,142 +1,42 @@
 "use client";
 
 import { ButtonProps, Input } from "@heroui/react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { useDebouncedCallback } from "use-debounce";
-import Icon from "./Shared/Icon";
+import React from "react";
+
 import Button from "./Shared/Button";
+import Icon from "./Shared/Icon";
 
-interface ContactState {
-  fullName?: string;
-  company?: string;
-  jobTitle?: string;
-  department?: string;
-  phones: string[];
-  emails: string[];
-  websites: string[];
-  address?: string;
-}
+import usePayloadForm from "@/hokks/usePayloadForm";
+import contactCodec from "@/utils/payloads/contact";
 
-const defaultState: ContactState = {
-  fullName: "",
-  company: "",
-  jobTitle: "",
-  department: "",
-  phones: [""],
-  emails: [""],
-  websites: [""],
-  address: "",
-};
+type ListField = "phones" | "emails" | "websites";
 
 function ContactTemplate() {
-  const pathname = usePathname();
-  const router = useRouter();
-  const sp = useSearchParams();
-  const searchParams = new URLSearchParams(sp);
+  const { data, patch, set } = usePayloadForm(contactCodec);
 
-  const text = searchParams.get("text") || "";
-
-  const [data, setData] = useState<ContactState>(defaultState);
-
-  const setQuery = (next: ContactState) => {
-    const params = new URLSearchParams(searchParams);
-    const fullName = next.fullName?.trim() || "";
-    const company = next.company?.trim() || "";
-    const jobTitle = next.jobTitle?.trim() || "";
-    const department = next.department?.trim() || "";
-    const address = next.address?.trim() || "";
-    const phones = next.phones.map((value) => value.trim()).filter(Boolean);
-    const emails = next.emails.map((value) => value.trim()).filter(Boolean);
-    const websites = next.websites.map((value) => value.trim()).filter(Boolean);
-
-    setOrDelete(params, "full_name", fullName);
-    setOrDelete(params, "company", company);
-    setOrDelete(params, "job_title", jobTitle);
-    setOrDelete(params, "department", department);
-    setOrDelete(params, "address", address);
-
-    params.delete("phone");
-    phones.forEach((phone) => params.append("phone", phone));
-
-    params.delete("email");
-    emails.forEach((email) => params.append("email", email));
-
-    params.delete("website");
-    websites.forEach((website) => params.append("website", website));
-
-    const formatted = formatContactVCard({
-      fullName,
-      company,
-      jobTitle,
-      department,
-      phones,
-      emails,
-      websites,
-      address,
-    });
-
-    if (formatted) params.set("text", formatted);
-    else params.delete("text");
-
-    router.replace(`${pathname}?${params.toString()}`);
-  };
-
-  const debounce = useDebouncedCallback(setQuery, 500);
-
-  const onFieldChange = (
-    key: "fullName" | "company" | "jobTitle" | "department" | "address",
-    value: string,
-  ) => {
-    setData((prev) => {
-      const newVal = { ...prev, [key]: value };
-      debounce(newVal);
-
-      return newVal;
-    });
-  };
-
-  const onListChange = (key: "phones" | "emails" | "websites", index: number, value: string) => {
-    setData((prev) => {
+  const onListChange = (key: ListField, index: number, value: string) => {
+    set((prev) => {
       const nextList = [...prev[key]];
+
       nextList[index] = value;
-      const newVal = { ...prev, [key]: nextList };
-      debounce(newVal);
 
-      return newVal;
+      return { ...prev, [key]: nextList };
     });
   };
 
-  const addListField = (key: "phones" | "emails" | "websites") => {
-    setData((prev) => {
-      const newVal = { ...prev, [key]: [...prev[key], ""] };
-      debounce(newVal);
-
-      return newVal;
-    });
+  const addListField = (key: ListField) => {
+    set((prev) => ({ ...prev, [key]: [...prev[key], ""] }));
   };
 
-  const removeListField = (key: "phones" | "emails" | "websites", index: number) => {
-    setData((prev) => {
+  const removeListField = (key: ListField, index: number) => {
+    set((prev) => {
       if (prev[key].length <= 1) return prev;
 
       const nextList = prev[key].filter((_, i) => i !== index);
-      const newVal = { ...prev, [key]: nextList.length ? nextList : [""] };
-      debounce(newVal);
 
-      return newVal;
+      return { ...prev, [key]: nextList.length ? nextList : [""] };
     });
   };
-
-  const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    onFieldChange(name as "fullName" | "company" | "jobTitle" | "department" | "address", value);
-  };
-
-  useEffect(() => {
-    const parsed = parseContactQuery(searchParams) || parseContactVCard(text);
-    if (parsed) setData(parsed);
-  }, []);
 
   return (
     <div className="flex flex-col gap-3 max-w-md">
@@ -147,8 +47,8 @@ function ContactTemplate() {
         name="fullName"
         placeholder="John Doe"
         value={data.fullName}
-        onChange={onInputChange}
-        isInvalid={!data.fullName?.trim()}
+        onChange={(e) => patch({ fullName: e.target.value })}
+        isInvalid={!data.fullName.trim()}
         errorMessage="Full Name is required"
       />
 
@@ -158,7 +58,7 @@ function ContactTemplate() {
         name="company"
         placeholder="Company"
         value={data.company}
-        onChange={onInputChange}
+        onChange={(e) => patch({ company: e.target.value })}
       />
 
       <Input
@@ -167,7 +67,7 @@ function ContactTemplate() {
         name="jobTitle"
         placeholder="Software Engineer"
         value={data.jobTitle}
-        onChange={onInputChange}
+        onChange={(e) => patch({ jobTitle: e.target.value })}
       />
 
       <Input
@@ -176,11 +76,15 @@ function ContactTemplate() {
         name="department"
         placeholder="Engineering"
         value={data.department}
-        onChange={onInputChange}
+        onChange={(e) => patch({ department: e.target.value })}
       />
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Phone Numbers</label>
+      <ListSection
+        id="contact-phones-label"
+        label="Phone Numbers"
+        addLabel="Add Phone"
+        onAdd={() => addListField("phones")}
+      >
         {data.phones.map((phone, index) => (
           <div key={`phone-${index}`} className="flex items-center gap-2">
             <Input
@@ -198,13 +102,14 @@ function ContactTemplate() {
             />
           </div>
         ))}
-        <Button size="sm" variant="flat" onPress={() => addListField("phones")}>
-          Add Phone
-        </Button>
-      </div>
+      </ListSection>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Emails</label>
+      <ListSection
+        id="contact-emails-label"
+        label="Emails"
+        addLabel="Add Email"
+        onAdd={() => addListField("emails")}
+      >
         {data.emails.map((email, index) => (
           <div key={`email-${index}`} className="flex items-center gap-2">
             <Input
@@ -223,13 +128,14 @@ function ContactTemplate() {
             />
           </div>
         ))}
-        <Button size="sm" variant="flat" onPress={() => addListField("emails")}>
-          Add Email
-        </Button>
-      </div>
+      </ListSection>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-sm">Websites</label>
+      <ListSection
+        id="contact-websites-label"
+        label="Websites"
+        addLabel="Add Website"
+        onAdd={() => addListField("websites")}
+      >
         {data.websites.map((website, index) => (
           <div key={`website-${index}`} className="flex items-center gap-2">
             <Input
@@ -247,10 +153,7 @@ function ContactTemplate() {
             />
           </div>
         ))}
-        <Button size="sm" variant="flat" onPress={() => addListField("websites")}>
-          Add Website
-        </Button>
-      </div>
+      </ListSection>
 
       <Input
         variant="bordered"
@@ -258,8 +161,33 @@ function ContactTemplate() {
         name="address"
         placeholder="Street, City"
         value={data.address}
-        onChange={onInputChange}
+        onChange={(e) => patch({ address: e.target.value })}
       />
+    </div>
+  );
+}
+
+interface ListSectionProps {
+  /** A plain <label> can't name a set of inputs, so the group is labelled by id. */
+  id: string;
+  label: string;
+  addLabel: string;
+  onAdd: () => void;
+  children: React.ReactNode;
+}
+
+function ListSection({ id, label, addLabel, onAdd, children }: ListSectionProps) {
+  return (
+    <div role="group" aria-labelledby={id} className="flex flex-col gap-2">
+      <span id={id} className="text-sm">
+        {label}
+      </span>
+
+      {children}
+
+      <Button size="sm" variant="flat" onPress={onAdd}>
+        {addLabel}
+      </Button>
     </div>
   );
 }
@@ -270,198 +198,6 @@ function Trash(props: ButtonProps) {
       <Icon name="trash-2" />
     </Button>
   );
-}
-
-function setOrDelete(params: URLSearchParams, key: string, value: string) {
-  if (value) params.set(key, value);
-  else params.delete(key);
-}
-
-function escapeVCardValue(value: string) {
-  return value
-    .replace(/\\/g, "\\\\")
-    .replace(/\r/g, "")
-    .replace(/\n/g, "\\n")
-    .replace(/;/g, "\\;")
-    .replace(/,/g, "\\,");
-}
-
-function unescapeVCardValue(value: string) {
-  return value
-    .replace(/\\n/g, "\n")
-    .replace(/\\,/g, ",")
-    .replace(/\\;/g, ";")
-    .replace(/\\\\/g, "\\");
-}
-
-function ensureList(values: string[]) {
-  return values.length ? values : [""];
-}
-
-function parseContactQuery(searchParams: URLSearchParams): ContactState | null {
-  const fullName = searchParams.get("full_name") || "";
-  const company = searchParams.get("company") || "";
-  const jobTitle = searchParams.get("job_title") || "";
-  const department = searchParams.get("department") || "";
-  const address = searchParams.get("address") || "";
-
-  const phones = searchParams
-    .getAll("phone")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  const emails = searchParams
-    .getAll("email")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  const websites = searchParams
-    .getAll("website")
-    .map((value) => value.trim())
-    .filter(Boolean);
-
-  const hasQueryData =
-    !!fullName ||
-    !!company ||
-    !!jobTitle ||
-    !!department ||
-    !!address ||
-    phones.length > 0 ||
-    emails.length > 0 ||
-    websites.length > 0;
-
-  if (!hasQueryData) return null;
-
-  return {
-    fullName,
-    company,
-    jobTitle,
-    department,
-    phones: ensureList(phones),
-    emails: ensureList(emails),
-    websites: ensureList(websites),
-    address,
-  };
-}
-
-function parseContactVCard(qrString: string): ContactState | null {
-  if (!qrString.includes("BEGIN:VCARD") || !qrString.includes("END:VCARD")) return null;
-
-  const state: ContactState = { ...defaultState, phones: [], emails: [], websites: [] };
-  const lines = qrString.split(/\r?\n/).map((line) => line.trim());
-
-  for (const line of lines) {
-    if (line.startsWith("FN:")) {
-      state.fullName = unescapeVCardValue(line.slice(3));
-      continue;
-    }
-
-    if (line.startsWith("ORG:")) {
-      const orgParts = line.slice(4).split(/(?<!\\);/);
-      state.company = unescapeVCardValue(orgParts[0] || "");
-      state.department = unescapeVCardValue(orgParts[1] || "");
-      continue;
-    }
-
-    if (line.startsWith("TITLE:")) {
-      state.jobTitle = unescapeVCardValue(line.slice(6));
-      continue;
-    }
-
-    const telMatch = line.match(/^TEL(?:;[^:]*)?:(.*)$/);
-    if (telMatch) {
-      state.phones.push(unescapeVCardValue(telMatch[1]));
-      continue;
-    }
-
-    const emailMatch = line.match(/^EMAIL(?:;[^:]*)?:(.*)$/);
-    if (emailMatch) {
-      state.emails.push(unescapeVCardValue(emailMatch[1]));
-      continue;
-    }
-
-    const urlMatch = line.match(/^URL(?:;[^:]*)?:(.*)$/);
-    if (urlMatch) {
-      state.websites.push(unescapeVCardValue(urlMatch[1]));
-      continue;
-    }
-
-    if (line.startsWith("ADR:")) {
-      const adrParts = line.slice(4).split(/(?<!\\);/);
-      state.address = unescapeVCardValue(adrParts[2] || "");
-    }
-  }
-
-  if (!state.fullName) return null;
-
-  state.phones = ensureList(state.phones.map((value) => value.trim()).filter(Boolean));
-  state.emails = ensureList(state.emails.map((value) => value.trim()).filter(Boolean));
-  state.websites = ensureList(state.websites.map((value) => value.trim()).filter(Boolean));
-
-  return state;
-}
-
-function toStructuredName(fullName: string): { firstName: string; lastName: string } | null {
-  const parts = fullName
-    .split(/\s+/)
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-  if (parts.length < 2) return null;
-
-  const lastName = parts[parts.length - 1];
-  const firstName = parts.slice(0, -1).join(" ");
-
-  if (!firstName || !lastName) return null;
-
-  return { firstName, lastName };
-}
-
-function formatContactVCard(data: ContactState): string {
-  const fullName = data.fullName?.trim() || "";
-  if (!fullName) return "";
-
-  const company = data.company?.trim();
-  const jobTitle = data.jobTitle?.trim();
-  const department = data.department?.trim();
-  const phones = data.phones.map((value) => value.trim()).filter(Boolean);
-  const emails = data.emails.map((value) => value.trim()).filter(Boolean);
-  const websites = data.websites.map((value) => value.trim()).filter(Boolean);
-  const address = data.address?.trim();
-
-  const lines = ["BEGIN:VCARD", "VERSION:3.0", `FN:${escapeVCardValue(fullName)}`];
-
-  const structuredName = toStructuredName(fullName);
-  if (structuredName) {
-    lines.push(
-      `N:${escapeVCardValue(structuredName.lastName)};${escapeVCardValue(structuredName.firstName)};;;`,
-    );
-  }
-
-  if (company || department) {
-    if (company && department)
-      lines.push(`ORG:${escapeVCardValue(company)};${escapeVCardValue(department)}`);
-    else if (company) lines.push(`ORG:${escapeVCardValue(company)}`);
-    else lines.push(`ORG:;${escapeVCardValue(department || "")}`);
-  }
-
-  if (jobTitle) lines.push(`TITLE:${escapeVCardValue(jobTitle)}`);
-
-  phones.forEach((phone, index) => {
-    lines.push(`TEL;TYPE=${index === 0 ? "CELL" : "WORK"}:${escapeVCardValue(phone)}`);
-  });
-
-  emails.forEach((email) => {
-    lines.push(`EMAIL:${escapeVCardValue(email)}`);
-  });
-
-  websites.forEach((website) => {
-    lines.push(`URL:${escapeVCardValue(website)}`);
-  });
-
-  if (address) lines.push(`ADR:;;${escapeVCardValue(address)};;;;`);
-
-  lines.push("END:VCARD");
-
-  return lines.join("\n");
 }
 
 export default ContactTemplate;
