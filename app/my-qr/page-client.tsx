@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+import QrPreviewDialog from "@/components/qr-preview-dialog";
+import SavedQrShare from "@/components/saved-qr-share";
 import { templateOptions } from "@/constants/template.data";
 import { useImageStore } from "@/store";
 import { applyBackup, backupFilename, buildBackup, parseBackup } from "@/utils/backup.utils";
@@ -67,6 +69,7 @@ function SavedQrList() {
   const [isBusy, setIsBusy] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftName, setDraftName] = useState("");
+  const [preview, setPreview] = useState<SavedQr | null>(null);
 
   const refresh = useCallback(async () => {
     setRecords(await listSavedQrs());
@@ -267,7 +270,17 @@ function SavedQrList() {
                 className="flex flex-col gap-4 rounded-2xl border border-foreground/10 bg-background/75 p-4 shadow-sm backdrop-blur"
               >
                 <div className="flex items-start gap-4">
-                  <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-foreground/10 bg-white">
+                  {/* A button, not the card: rename and delete live in here
+                      too, so making the whole row clickable would put a preview
+                      one stray click away from every other action. The preview
+                      renders live from `params`, so this works even for a
+                      record whose thumbnail failed to generate. */}
+                  <button
+                    type="button"
+                    aria-label={`Preview ${record.name}`}
+                    className="flex size-20 shrink-0 cursor-zoom-in items-center justify-center overflow-hidden rounded-xl border border-foreground/10 bg-white transition hover:border-primary/50 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                    onClick={() => setPreview(record)}
+                  >
                     {record.thumbnail ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -280,7 +293,7 @@ function SavedQrList() {
                     ) : (
                       <QrCode className="text-foreground/30" size={24} />
                     )}
-                  </div>
+                  </button>
 
                   <div className="min-w-0 flex-1 space-y-1">
                     {editingId === record.id ? (
@@ -355,6 +368,8 @@ function SavedQrList() {
                     Open in Studio
                   </Button>
 
+                  <SavedQrShare record={record} />
+
                   <Button
                     isIconOnly
                     size="sm"
@@ -371,6 +386,12 @@ function SavedQrList() {
           </ul>
         )}
       </div>
+
+      <QrPreviewDialog
+        record={preview}
+        onClose={() => setPreview(null)}
+        onOpenInStudio={(record) => void open(record)}
+      />
 
       <Modal isOpen={clearAll.isOpen} size="sm" onOpenChange={clearAll.onOpenChange}>
         <ModalContent>

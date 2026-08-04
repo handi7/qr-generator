@@ -2,9 +2,9 @@
 
 import { addToast } from "@heroui/react";
 import QRCodeStyling from "qr-code-styling";
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useRef } from "react";
 
-const IMAGE_TYPE = "image/png";
+import useShareImage from "@/hokks/useShareImage";
 
 interface ShareQrResult {
   /** Whether this browser can hand a PNG file to a share target. */
@@ -19,29 +19,19 @@ interface ShareQrResult {
 }
 
 /**
- * Share the rendered QR without going through a file download.
+ * Share the QR the Studio is currently rendering.
  *
  * The PNG is regenerated eagerly rather than inside the click handler: Safari
  * treats a long `await` between the click and `navigator.share()` as a loss of
  * user activation and rejects the call, so by the time the button is pressed
- * the blob has to already exist.
+ * the blob has to already exist. That eager cache is the whole reason this hook
+ * exists on top of `useShareImage`.
  */
 function useShareQr(qrCode: RefObject<QRCodeStyling | null>, filename: string): ShareQrResult {
+  const { canShareImage, canCopyImage, copyBlob, shareBlob } = useShareImage();
+
   const blobRef = useRef<Blob | null>(null);
   const revisionRef = useRef(0);
-
-  const [canShareImage, setCanShareImage] = useState(false);
-  const [canCopyImage, setCanCopyImage] = useState(false);
-
-  useEffect(() => {
-    // Probe after mount, never while rendering: `navigator` does not exist
-    // during SSR, and branching on it would desync hydration. Web Share only
-    // reports file support for a concrete file, so hand it a throwaway one.
-    const probe = new File([new Uint8Array(1)], "probe.png", { type: IMAGE_TYPE });
-
-    setCanShareImage(!!navigator.share && !!navigator.canShare?.({ files: [probe] }));
-    setCanCopyImage(typeof ClipboardItem !== "undefined" && !!navigator.clipboard?.write);
-  }, []);
 
   const prepare = useCallback(() => {
     const revision = ++revisionRef.current;
@@ -68,15 +58,8 @@ function useShareQr(qrCode: RefObject<QRCodeStyling | null>, filename: string): 
 
     if (!blob) return false;
 
-    try {
-      await navigator.clipboard.write([new ClipboardItem({ [IMAGE_TYPE]: blob })]);
-      addToast({ title: "QR image copied", color: "success" });
-
-      return true;
-    } catch {
-      return false;
-    }
-  }, []);
+    return copyBlob(blob);
+  }, [copyBlob]);
 
   const shareImage = useCallback(async () => {
     const blob = blobRef.current;
@@ -91,27 +74,10 @@ function useShareQr(qrCode: RefObject<QRCodeStyling | null>, filename: string): 
       return;
     }
 
-    // Built here, not in prepare(), so the filename field stays live without
-    // invalidating the cached blob on every keystroke.
-    const file = new File([blob], `${filename.trim() || "qr"}.png`, { type: IMAGE_TYPE });
-
-    try {
-      await navigator.share({ files: [file], title: file.name });
-    } catch (error) {
-      // Dismissing the share sheet is a normal outcome, not a failure.
-      if (error instanceof Error && error.name === "AbortError") return;
-
-      const copied = await copyImage();
-
-      if (!copied) {
-        addToast({
-          title: "Could not share the image",
-          description: "Use Download instead.",
-          color: "danger",
-        });
-      }
-    }
-  }, [filename, copyImage]);
+    // The name is read here, not in prepare(), so the filename field stays live
+    // without invalidating the cached blob on every keystroke.
+    await shareBlob(blob, `${filename.trim() || "qr"}.png`);
+  }, [filename, shareBlob]);
 
   const copyLink = useCallback(async () => {
     try {
