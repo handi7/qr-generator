@@ -22,12 +22,12 @@ export const metadata: Metadata = {
     template: "%s | GaweQR",
   },
   description:
-    "GaweQR helps you generate custom QR codes fast. Design links, WiFi, WhatsApp, contact, and email QR codes, then download in PNG, SVG, JPEG, or WEBP.",
+    "GaweQR generates custom QR codes in your browser — links, WiFi, WhatsApp, contacts, email, and QRIS. Scan a code to restyle it, save it on your device, and export as PNG, SVG, JPEG, or WEBP.",
   applicationName: "GaweQR",
   openGraph: {
     title: "GaweQR - Create Custom QR Codes",
     description:
-      "Generate personalized QR codes with flexible styles and templates for links, WiFi, contact cards, WhatsApp, and email.",
+      "Generate personalized QR codes with flexible styles and templates for links, WiFi, contact cards, WhatsApp, email, and QRIS — plus scanning to restyle codes you already have.",
     images: [
       {
         url: "/qr_code.png",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "GaweQR - Create Custom QR Codes",
     description:
-      "Generate personalized QR codes with flexible styles and templates for links, WiFi, contact cards, WhatsApp, and email.",
+      "Generate personalized QR codes with flexible styles and templates for links, WiFi, contact cards, WhatsApp, email, and QRIS — plus scanning to restyle codes you already have.",
     images: ["https://gaweqr.my.id/qr_code.png"],
   },
   alternates: {

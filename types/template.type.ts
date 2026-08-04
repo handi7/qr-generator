@@ -17,4 +17,10 @@ export interface Template {
   accent: string;
   icon: IconName;
   highlights: string[];
+  /**
+   * Shown in the landing page's shortlist. Opt-in on purpose: the list used to
+   * be `templates.slice(0, 4)`, which silently hid every template added past
+   * the fourth — Email and QRIS both went live without ever appearing there.
+   */
+  featured?: boolean;
 }

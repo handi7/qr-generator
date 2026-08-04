@@ -53,6 +53,22 @@ function ScanQrDialog() {
     setHasCamera(isCameraSupported());
   }, []);
 
+  useEffect(() => {
+    if (searchParams.get("scan") !== "1") return;
+
+    // Consumed immediately. Left in place it would ride along into every later
+    // URL write — `apply()` builds on the current params — and reopen the
+    // dialog on the back button.
+    const params = new URLSearchParams(searchParams.toString());
+
+    params.delete("scan");
+
+    const rest = params.toString();
+
+    onOpen();
+    router.replace(rest ? `/studio?${rest}` : "/studio");
+  }, [searchParams, onOpen, router]);
+
   const reset = useCallback(() => {
     setStatus("idle");
     setPayload("");

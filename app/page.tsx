@@ -5,14 +5,14 @@ import HomePageClient from "./page-client";
 export const metadata: Metadata = {
   title: "GaweQR - Custom QR Code Generator",
   description:
-    "Create custom QR codes for links, WiFi, WhatsApp, contacts, and email with GaweQR. Design, preview, and download instantly.",
+    "Create custom QR codes for links, WiFi, WhatsApp, contacts, email, and QRIS. Scan an existing code to restyle it. Everything runs in your browser — nothing is uploaded.",
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "GaweQR - Custom QR Code Generator",
     description:
-      "Create custom QR codes for links, WiFi, WhatsApp, contacts, and email with GaweQR. Design, preview, and download instantly.",
+      "Create custom QR codes for links, WiFi, WhatsApp, contacts, email, and QRIS. Scan an existing code to restyle it. Everything runs in your browser — nothing is uploaded.",
     url: "/",
     siteName: "GaweQR",
     locale: "en_US",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "GaweQR - Custom QR Code Generator",
     description:
-      "Create custom QR codes for links, WiFi, WhatsApp, contacts, and email with GaweQR. Design, preview, and download instantly.",
+      "Create custom QR codes for links, WiFi, WhatsApp, contacts, email, and QRIS. Scan an existing code to restyle it. Everything runs in your browser — nothing is uploaded.",
     images: ["/qr_code.png"],
   },
 };
@@ -41,7 +41,7 @@ const jsonLd = {
   name: "GaweQR",
   url: "https://gaweqr.my.id",
   description:
-    "GaweQR helps you generate custom QR codes fast. Design links, WiFi, WhatsApp, contact, and email QR codes, then download in PNG, SVG, JPEG, or WEBP.",
+    "GaweQR generates custom QR codes in your browser — links, WiFi, WhatsApp, contacts, email, and QRIS. Scan a code to restyle it, save it on your device, and export as PNG, SVG, JPEG, or WEBP.",
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any",
   offers: {
